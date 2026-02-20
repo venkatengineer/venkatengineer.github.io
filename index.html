@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Venkat Badhrinarayanan PV</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Icons & Stylings -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --text: #ffffff;
+            --accent: #00ff88;
+            --secondary: #222;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .syne { font-family: 'Syne', sans-serif; }
+        
+        /* Loader / Splash Screen */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+
+        #loader .counter {
+            font-family: 'Syne', sans-serif;
+            font-size: 10vw;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        #loader .loading-text {
+            font-size: 1rem;
+            letter-spacing: 0.5rem;
+            text-transform: uppercase;
+            margin-top: 1rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* Hero Styling */
+        .hero-title {
+            font-size: clamp(3rem, 12vw, 10rem);
+            line-height: 0.9;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .accent-text {
+            color: var(--accent);
+            -webkit-text-stroke: 1px var(--accent);
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Sections */
+        section {
+            padding: 10vh 5vw;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .section-header {
+            font-size: clamp(2rem, 6vw, 5rem);
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        /* Glassmorphism Cards */
+        .project-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-10px);
+            border-color: var(--accent);
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at top right, rgba(0, 255, 136, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+
+        /* Magnetic Button Effect (Simulation) */
+        .btn-bold {
+            background: var(--accent);
+            color: #000;
+            padding: 1.2rem 3rem;
+            font-weight: 800;
+            border-radius: 100px;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: transform 0.3s;
+        }
+
+        .btn-bold:hover {
+            transform: scale(1.05);
+        }
+
+        /* Storytelling Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-title { font-size: 15vw; }
+            section { padding: 4rem 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Splash Screen -->
+    <div id="loader">
+        <div class="counter">0%</div>
+        <div class="loading-text">Initializing</div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="smooth-wrapper">
+        <div id="smooth-content">
+            
+            <!-- Navigation (Clean & Minimal) -->
+            <nav class="fixed top-0 left-0 w-full p-8 z-40 flex justify-between items-center mix-blend-difference">
+                <a href="#" class="syne font-bold text-2xl uppercase tracking-tighter">VB.</a>
+                <div class="hidden md:flex gap-10 uppercase text-xs font-semibold tracking-widest">
+                    <a href="#about" class="hover:text-emerald-400 transition">About</a>
+                    <a href="#projects" class="hover:text-emerald-400 transition">Works</a>
+                    <a href="#contact" class="hover:text-emerald-400 transition">Contact</a>
+                </div>
+            </nav>
+
+            <!-- Hero Section -->
+            <section id="hero" class="relative overflow-hidden">
+                <div class="max-w-7xl mx-auto w-full">
+                    <h1 class="hero-title syne">
+                        <span class="block overflow-hidden"><span class="reveal-text">Venkat</span></span>
+                        <span class="block overflow-hidden"><span class="accent-text reveal-text">Portfolio</span></span>
+                    </h1>
+                    <div class="mt-12 max-w-2xl reveal">
+                        <p class="text-xl md:text-2xl text-gray-400">
+                            Computer Science Student & Creative Developer crafting digital experiences that blend logic with high-impact aesthetics.
+                        </p>
+                        <div class="mt-10 flex gap-6">
+                            <a href="#projects" class="btn-bold syne">Explore Works</a>
+                            <div class="w-32 h-32 rounded-full overflow-hidden border border-white/20 hidden md:block">
+                                <img src="venkat.jpg" alt="Profile" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About Section (Intro Story) -->
+            <section id="about" class="bg-white text-black py-32 rounded-[2rem] md:rounded-[4rem] mx-2 md:mx-4">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="section-header syne font-extrabold">Who I Am</h2>
+                    <div class="grid md:grid-cols-2 gap-16 items-start">
+                        <p class="text-2xl md:text-4xl syne leading-tight font-bold reveal">
+                            "Passionate about building purposeful technology that makes an impact."
+                        </p>
+                        <div class="space-y-6 text-lg text-gray-700 reveal">
+                            <p>I'm Venkat Badhrinarayanan PV, exploring the intersections of Linux systems, C, Python, and modern web development.</p>
+                            <p>Currently engineering solutions like a smart tourist guide and a food waste reduction tracker.</p>
+                            <div class="flex gap-4 pt-6">
+                                <a href="https://github.com/venkatengineer" target="_blank" class="h-12 w-12 rounded-full border border-black flex items-center justify-center hover:bg-black hover:text-white transition">
+                                    <i class="fab fa-github"></i>
+                                </a>
+                                <a href="https://www.linkedin.com/in/venkat-badhrinarayanan-747148264/" target="_blank" class="h-12 w-12 rounded-full border border-black flex items-center justify-center hover:bg-black hover:text-white transition">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Projects Section -->
+            <section id="projects" class="py-32">
+                <div class="max-w-7xl mx-auto">
+                    <div class="flex flex-col md:flex-row justify-between items-end mb-20">
+                        <h2 class="section-header syne font-extrabold mb-0">Selected<br>Works</h2>
+                        <p class="text-gray-500 uppercase tracking-widest text-sm mb-4">Crafting the future</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <!-- Project 1 -->
+                        <div class="project-card reveal">
+                            <div class="text-emerald-400 text-4xl mb-6"><i class="fa-solid fa-map-location-dot"></i></div>
+                            <h3 class="syne text-2xl font-bold mb-4">Tourist Guide App</h3>
+                            <p class="text-gray-400 mb-6">Connecting travelers with local expertise for safe and authentic exploration.</p>
+                            <span class="text-xs uppercase tracking-tighter text-emerald-300 bg-emerald-950/50 px-3 py-1 rounded-full">In Development</span>
+                        </div>
+
+                        <!-- Project 2 -->
+                        <div class="project-card reveal">
+                            <div class="text-emerald-400 text-4xl mb-6"><i class="fa-solid fa-utensils"></i></div>
+                            <h3 class="syne text-2xl font-bold mb-4">Expiry Tracker</h3>
+                            <p class="text-gray-400 mb-6">Smart receipt analysis and recipe suggestions to eliminate food waste.</p>
+                            <span class="text-xs uppercase tracking-tighter text-emerald-300 bg-emerald-950/50 px-3 py-1 rounded-full">In Development</span>
+                        </div>
+
+                        <!-- Project 3 -->
+                        <div class="project-card reveal">
+                            <div class="text-emerald-400 text-4xl mb-6"><i class="fa-solid fa-lock"></i></div>
+                            <h3 class="syne text-2xl font-bold mb-4">Encryptor Lite</h3>
+                            <p class="text-gray-400 mb-6">Hiding secrets within storytelling narratives. A creative twist on cryptography.</p>
+                            <a href="https://venkatengineer.github.io/encryptor/" target="_blank" class="mt-4 inline-block text-emerald-400 font-bold">Try Live <i class="fa-solid fa-arrow-right ml-2"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section id="contact" class="text-center py-40">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="syne text-6xl md:text-9xl font-extrabold mb-12">Let's<br>Talk.</h2>
+                    <a href="contact.html" class="btn-bold syne text-2xl px-16 py-6 ring-offset-4 ring-offset-black transition-all hover:ring-2 hover:ring-emerald-400">Send an Email</a>
+                    
+                    <footer class="mt-40 pt-10 border-t border-white/10 text-gray-600 uppercase text-xs tracking-[0.3em]">
+                        &copy; 2026 Venkat Badhrinarayanan PV &bull; Digital Portfolio
+                    </footer>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Animation Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+
+    <script>
+        // 1. Loader Animation
+        const loader = document.getElementById('loader');
+        const counter = document.querySelector('.counter');
+        let count = 0;
+
+        const updateCounter = setInterval(() => {
+            count += Math.floor(Math.random() * 5) + 1;
+            if (count >= 100) {
+                count = 100;
+                clearInterval(updateCounter);
+                finishLoading();
+            }
+            counter.innerText = count + '%';
+        }, 30);
+
+        function finishLoading() {
+            const tl = gsap.timeline();
+            tl.to("#loader .counter, #loader .loading-text", {
+                y: -100,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power4.in"
+            })
+            .to("#loader", {
+                height: 0,
+                duration: 1.2,
+                ease: "expo.inOut"
+            })
+            .from(".reveal-text", {
+                y: 200,
+                stagger: 0.1,
+                duration: 1,
+                ease: "power4.out"
+            }, "-=0.5")
+            .from(".hero-title", {
+                scale: 1.2,
+                opacity: 0,
+                duration: 2,
+                ease: "power4.out"
+            }, "-=1");
+        }
+
+        // 2. Smooth Scroll (Lenis)
+        const lenis = new Lenis();
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // 3. Scroll Animations
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Storytelling section reveals
+        gsap.utils.toArray(".reveal").forEach((elem) => {
+            gsap.to(elem, {
+                scrollTrigger: {
+                    trigger: elem,
+                    start: "top 85%",
+                    toggleActions: "play none none none"
+                },
+                opacity: 1,
+                y: 0,
+                duration: 1.5,
+                ease: "power4.out",
+                stagger: 0.2
+            });
+        });
+
+        // Theme switch for About Section (Dark to Light)
+        gsap.to("body", {
+            scrollTrigger: {
+                trigger: "#about",
+                start: "top 50%",
+                end: "bottom 50%",
+                toggleActions: "play reverse play reverse"
+            },
+            backgroundColor: "#ffffff",
+            color: "#000000",
+            duration: 0.5
+        });
+
+        // Background color return to dark
+        ScrollTrigger.create({
+            trigger: "#projects",
+            start: "top 50%",
+            onEnter: () => gsap.to("body", { backgroundColor: "#0a0a0a", color: "#ffffff", duration: 0.5 }),
+            onLeaveBack: () => gsap.to("body", { backgroundColor: "#ffffff", color: "#000000", duration: 0.5 })
+        });
+
+    </script>
+</body>
+</html>
+
