@@ -72,13 +72,16 @@
             margin: 0 auto;
         }
 
-        /* --- CLIPPING FIXES --- */
+        /* --- CLIPPING FIXES (PHASE 17) --- */
         .page-header {
-            font-size: clamp(3rem, 12vw, 10rem);
-            line-height: 1.2;
+            font-size: clamp(2.5rem, 10vw, 8.5rem);
+            line-height: 1.5;
             text-transform: uppercase;
             letter-spacing: -0.04em;
+            padding-top: 80px;
             padding-bottom: 20px;
+            width: 100%;
+            overflow: visible;
         }
 
         .accent-text {
@@ -189,7 +192,6 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
 
-        /* FIXED REPO NAME CLIPPING */
         .repo-title {
             word-break: break-word;
             overflow-wrap: break-word;
@@ -197,7 +199,6 @@
             line-height: 1.2;
             margin-bottom: 1.5rem;
             min-height: 3.6em;
-            /* Allow up to 3 lines */
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
@@ -261,6 +262,7 @@
         @media (max-width: 768px) {
             .page-header {
                 font-size: 15vw;
+                padding-top: 100px;
             }
 
             section {
@@ -299,13 +301,13 @@
     <div id="smooth-wrapper">
         <div id="smooth-content">
 
-            <section id="works-hero">
+            <section id="works-hero" class="!justify-start">
                 <div class="section-container text-center">
                     <h1 class="page-header syne font-[800]">
                         <span class="block">The</span>
                         <span class="block accent-text">Repository.</span>
                     </h1>
-                    <div class="mt-16 reveal">
+                    <div class="mt-8 reveal">
                         <p class="text-xs md:text-sm text-emerald-400 mono uppercase tracking-[0.5em]" id="repo-status">
                             // Accessing_GitHub_API...
                         </p>

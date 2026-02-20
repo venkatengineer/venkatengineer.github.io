@@ -177,14 +177,17 @@
             margin: 0 auto;
         }
 
-        /* --- FIXING CLIPPED WORDS --- */
+        /* --- CLIPPING FIXES (PHASE 17) --- */
         .hero-title {
-            font-size: clamp(2.5rem, 11vw, 10rem);
-            line-height: 1.2;
+            font-size: clamp(2.5rem, 10vw, 8.5rem);
+            line-height: 1.5;
             /* Increased to fix line clipping */
             text-transform: uppercase;
+            padding-top: 80px;
             padding-bottom: 20px;
             /* Space for descenders */
+            width: 100%;
+            overflow: visible;
         }
 
         .reveal-container {
