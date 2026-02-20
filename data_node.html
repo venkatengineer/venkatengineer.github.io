@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Node | Command Center</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        :root {
+            --bg: #050505;
+            --text: #ffffff;
+            --accent: #00ffbb;
+            --alien-glow: rgba(0, 255, 187, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+            background-image:
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 187, 0.03) 0%, transparent 50%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 50px 50px, 50px 50px;
+        }
+
+        .syne {
+            font-family: 'Syne', sans-serif;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        section {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10vh 5vw;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            padding: 4rem;
+            border-radius: 1.5rem;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+        }
+
+        .input-group {
+            margin-bottom: 3rem;
+        }
+
+        .input-group label {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: white;
+            padding: 1.25rem;
+            font-size: 1rem;
+            outline: none;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            border-color: var(--accent);
+            background: rgba(0, 255, 187, 0.05);
+            box-shadow: 0 0 20px rgba(0, 255, 187, 0.1);
+        }
+
+        .btn-futuristic {
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 1.5rem 4rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-radius: 8px;
+            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            background: rgba(0, 255, 187, 0.05);
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+        }
+
+        .btn-futuristic:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 50px var(--alien-glow);
+            transform: translateY(-5px);
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(0, 255, 187, 0.1);
+            color: var(--accent);
+            border-radius: 100px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+        }
+
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 2rem 4rem;
+            z-index: 1000;
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            right: 0;
+            width: 0%;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        @media (max-width: 768px) {
+            .glass-card {
+                padding: 2rem;
+            }
+
+            nav {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="flex justify-between items-center mix-blend-difference">
+        <a href="index.html" class="syne font-extrabold text-2xl uppercase tracking-tighter">VB.<span
+                class="text-emerald-400">EXE</span></a>
+        <div class="hidden md:flex gap-10 uppercase text-[9px] font-bold tracking-[0.25em] mono">
+            <a href="index.html" class="nav-link">/Home</a>
+            <a href="about.html" class="nav-link">/About</a>
+            <a href="projects.html" class="nav-link">/Works</a>
+            <a href="hackathons.html" class="nav-link">/Hack</a>
+            <a href="data_node.html" class="nav-link text-emerald-400">/Command</a>
+            <a href="contact.html" class="nav-link">/Contact</a>
+        </div>
+    </nav>
+
+    <section>
+        <div class="glass-card">
+            <span class="status-pill">// Node_Command_Center_Active</span>
+            <h1 class="syne text-5xl md:text-7xl font-black uppercase mb-12 tracking-tighter">Data <br><span
+                    class="text-emerald-400">Insertion.</span></h1>
+
+            <form id="data-form">
+                <div class="input-group">
+                    <label>Identity_Alias</label>
+                    <input type="text" id="full-name" placeholder="Venkat Badhrinarayanan PV" />
+                </div>
+
+                <div class="input-group">
+                    <label>Core_Description</label>
+                    <textarea id="bio-text" rows="4"
+                        placeholder="Creative Technologist. Automated systems and cinematic digital architecture."></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label>Custom_Experience_Entry</label>
+                    <textarea id="experience-text" rows="4"
+                        placeholder="Manual entry for timeline or specific achievements..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-futuristic">Commit to Memory</button>
+            </form>
+
+            <div id="save-msg"
+                class="hidden mt-8 text-center text-emerald-400 mono text-[10px] uppercase tracking-widest animate-pulse">
+                >> DATA_COMMITTED_SUCCESSFULLY. REFRESHING_NODES...
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const form = document.getElementById('data-form');
+        const saveMsg = document.getElementById('save-msg');
+
+        // Load existing data
+        window.addEventListener('load', () => {
+            const data = JSON.parse(localStorage.getItem('vb_portfolio_data') || '{}');
+            if (data.name) document.getElementById('full-name').value = data.name;
+            if (data.bio) document.getElementById('bio-text').value = data.bio;
+            if (data.experience) document.getElementById('experience-text').value = data.experience;
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const data = {
+                name: document.getElementById('full-name').value,
+                bio: document.getElementById('bio-text').value,
+                experience: document.getElementById('experience-text').value,
+                timestamp: new Date().toISOString()
+            };
+
+            localStorage.setItem('vb_portfolio_data', JSON.stringify(data));
+
+            saveMsg.classList.remove('hidden');
+            setTimeout(() => {
+                saveMsg.classList.add('hidden');
+            }, 3000);
+        });
+    </script>
+</body>
+
+</html>

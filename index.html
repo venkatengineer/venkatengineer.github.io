@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Venkat Badhrinarayanan PV</title>
+    <title>Venkat Badhrinarayanan PV | Cinematic Digital Experience</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    
-    <!-- Icons & Stylings -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <style>
         :root {
-            --bg: #0a0a0a;
+            --bg: #050505;
             --text: #ffffff;
-            --accent: #00ff88;
-            --secondary: #222;
+            --accent: #00ffbb;
+            --alien-glow: rgba(0, 255, 187, 0.4);
+            --cli-green: #00ff41;
         }
 
         * {
@@ -35,45 +39,159 @@
             line-height: 1.6;
         }
 
-        .syne { font-family: 'Syne', sans-serif; }
-        
-        /* Loader / Splash Screen */
-        #loader {
+        .syne {
+            font-family: 'Syne', sans-serif;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* --- CLI OVERLAY --- */
+        #cli-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100vh;
             background: #000;
+            z-index: 10000;
+            padding: clamp(2rem, 5vw, 4rem);
+            color: var(--cli-green);
+            font-family: 'JetBrains Mono', monospace;
+            overflow: hidden;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
             flex-direction: column;
         }
 
-        #loader .counter {
-            font-family: 'Syne', sans-serif;
-            font-size: 10vw;
-            font-weight: 800;
-            color: var(--accent);
-            line-height: 1;
+        #cli-output {
+            flex-grow: 1;
         }
 
-        #loader .loading-text {
-            font-size: 1rem;
-            letter-spacing: 0.5rem;
+        .cli-line {
+            margin-bottom: 0.5rem;
+            min-height: 1.2em;
+        }
+
+        .cli-prompt {
+            color: #fff;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2em;
+            background: var(--cli-green);
+            animation: blink 0.8s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        /* --- SKIP BUTTON --- */
+        #skip-splash {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            z-index: 10005;
+            background: transparent;
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            color: var(--cli-green);
+            padding: 10px 20px;
+            font-size: 10px;
             text-transform: uppercase;
-            margin-top: 1rem;
-            color: rgba(255,255,255,0.5);
+            letter-spacing: 0.25em;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0.6;
+            border-radius: 2px;
         }
 
-        /* Hero Styling */
+        #skip-splash:hover {
+            background: var(--cli-green);
+            color: #000;
+            opacity: 1;
+            box-shadow: 0 0 20px var(--cli-green);
+        }
+
+        /* --- SPACESHIP REVEAL --- */
+        #spaceship-container {
+            position: fixed;
+            bottom: -500px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10001;
+            pointer-events: none;
+            display: none;
+        }
+
+        .saucer {
+            width: clamp(300px, 40vw, 650px);
+            filter: drop-shadow(0 0 60px var(--alien-glow));
+        }
+
+        .engine-glow {
+            fill: var(--accent);
+            filter: blur(4px);
+            animation: engine-pulse 0.2s infinite alternate;
+        }
+
+        .beam {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200vw;
+            height: 400vh;
+            background: linear-gradient(180deg, var(--accent) 0%, transparent 100%);
+            transform: translateX(-50%);
+            opacity: 0;
+            clip-path: polygon(45% 0, 55% 0, 100% 100%, 0 100%);
+            z-index: -1;
+        }
+
+        /* --- MAIN CONTENT --- */
+        #main-content {
+            opacity: 0;
+            visibility: hidden;
+            width: 100%;
+        }
+
+        section {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 10vh 5vw;
+        }
+
+        .section-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* --- FIXING CLIPPED WORDS --- */
         .hero-title {
-            font-size: clamp(3rem, 12vw, 10rem);
-            line-height: 0.9;
+            font-size: clamp(2.5rem, 11vw, 10rem);
+            line-height: 1.2;
+            /* Increased to fix line clipping */
             text-transform: uppercase;
-            font-weight: 800;
+            padding-bottom: 20px;
+            /* Space for descenders */
+        }
+
+        .reveal-container {
+            overflow: visible;
+            /* Changed from hidden to avoid eating words */
+            margin-bottom: -10px;
+            padding: 10px 0;
         }
 
         .accent-text {
@@ -82,312 +200,357 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* Sections */
-        section {
-            padding: 10vh 5vw;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+        /* --- INDUSTRIAL UI UPGRADE --- */
+        .hitech-widget {
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            overflow: hidden;
         }
 
-        .section-header {
-            font-size: clamp(2rem, 6vw, 5rem);
-            margin-bottom: 2rem;
+        /* Corner Brackets */
+        .hitech-widget::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 15px;
+            height: 15px;
+            border-top: 2px solid var(--accent);
+            border-right: 2px solid var(--accent);
+            opacity: 0;
+            transition: all 0.4s;
+        }
+
+        .hitech-widget::before {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 15px;
+            height: 15px;
+            border-bottom: 2px solid var(--accent);
+            border-left: 2px solid var(--accent);
+            opacity: 0;
+            transition: all 0.4s;
+        }
+
+        .hitech-widget:hover::after,
+        .hitech-widget:hover::before {
+            opacity: 1;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 25px;
+            height: 25px;
+        }
+
+        /* Scanning Line */
+        .scan-line {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .hitech-widget:hover .scan-line {
+            animation: scan 1.5s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes scan {
+            0% {
+                top: -10%;
+            }
+
+            100% {
+                top: 110%;
+            }
+        }
+
+        .btn-futuristic {
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 1.25rem 3.5rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
             text-transform: uppercase;
-        }
-
-        /* Glassmorphism Cards */
-        .project-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 2.5rem;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            border-radius: 4px;
+            transition: all 0.4s;
+            background: rgba(0, 255, 187, 0.05);
+            cursor: pointer;
+            display: inline-block;
             position: relative;
             overflow: hidden;
         }
 
-        .project-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-10px);
-            border-color: var(--accent);
-        }
-
-        .project-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at top right, rgba(0, 255, 136, 0.1), transparent);
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
-
-        .project-card:hover::before {
-            opacity: 1;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #000;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent);
-            border-radius: 10px;
-        }
-
-        /* Magnetic Button Effect (Simulation) */
-        .btn-bold {
+        .btn-futuristic:hover {
             background: var(--accent);
             color: #000;
-            padding: 1.2rem 3rem;
-            font-weight: 800;
-            border-radius: 100px;
-            display: inline-block;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: transform 0.3s;
-        }
-
-        .btn-bold:hover {
+            box-shadow: 0 0 50px var(--alien-glow);
             transform: scale(1.05);
         }
 
-        /* Storytelling Reveal */
-        .reveal {
-            opacity: 0;
-            transform: translateY(50px);
+        .project-card {
+            background: #0d0d0d;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 4.5rem 2rem;
+            text-align: center;
+            border-radius: 8px;
         }
 
-        /* Responsive adjustments */
+        .project-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-10px);
+            background: #111;
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            right: 0;
+            width: 0%;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
         @media (max-width: 768px) {
-            .hero-title { font-size: 15vw; }
-            section { padding: 4rem 1.5rem; }
+            .hero-title {
+                font-size: 14vw;
+            }
+
+            section {
+                padding: 4rem 1.5rem;
+            }
         }
     </style>
 </head>
+
 <body>
 
-    <!-- Splash Screen -->
-    <div id="loader">
-        <div class="counter">0%</div>
-        <div class="loading-text">Initializing</div>
+    <div id="progress"
+        style="position:fixed; top:0; left:0; height:4px; background:var(--accent); width:0; z-index:1000;"></div>
+
+    <div id="cli-overlay">
+        <div id="cli-output"></div>
+        <button id="skip-splash" class="mono">/SKIP_INTRO</button>
     </div>
 
-    <!-- Main Content -->
-    <div id="smooth-wrapper">
-        <div id="smooth-content">
-            
-            <!-- Navigation (Clean & Minimal) -->
-            <nav class="fixed top-0 left-0 w-full p-8 z-40 flex justify-between items-center mix-blend-difference">
-                <a href="#" class="syne font-bold text-2xl uppercase tracking-tighter">VB.</a>
-                <div class="hidden md:flex gap-10 uppercase text-xs font-semibold tracking-widest">
-                    <a href="#about" class="hover:text-emerald-400 transition">About</a>
-                    <a href="#projects" class="hover:text-emerald-400 transition">Works</a>
-                    <a href="#contact" class="hover:text-emerald-400 transition">Contact</a>
-                </div>
-            </nav>
+    <div id="spaceship-container">
+        <div class="beam" id="revealBeam"></div>
+        <svg class="saucer" viewBox="0 0 400 150">
+            <path d="M50 100 Q200 20 350 100 L370 110 Q200 130 30 110 Z" fill="#1a1a1a" />
+            <ellipse cx="200" cy="115" rx="175" ry="22" fill="#030303" />
+            <rect x="150" y="112" width="100" height="8" rx="4" class="engine-glow" />
+            <path d="M140 70 Q200 35 260 70" fill="#222" stroke="var(--accent)" stroke-width="1.5" />
+            <circle cx="80" cy="105" r="4" fill="var(--accent)" />
+            <circle cx="200" cy="118" r="4" fill="var(--accent)" />
+            <circle cx="320" cy="105" r="4" fill="var(--accent)" />
+        </svg>
+    </div>
 
-            <!-- Hero Section -->
-            <section id="hero" class="relative overflow-hidden">
-                <div class="max-w-7xl mx-auto w-full">
-                    <h1 class="hero-title syne">
-                        <span class="block overflow-hidden"><span class="reveal-text">Venkat</span></span>
-                        <span class="block overflow-hidden"><span class="accent-text reveal-text">Portfolio</span></span>
+    <div id="main-content">
+        <nav class="fixed top-0 left-0 w-full p-8 z-[500] flex justify-between items-center mix-blend-difference">
+            <a href="index.html" class="syne font-extrabold text-2xl uppercase tracking-tighter">VB.<span
+                    class="text-emerald-400">EXE</span></a>
+            <div class="hidden md:flex gap-10 uppercase text-[9px] font-bold tracking-[0.25em] mono">
+                <a href="about.html" class="nav-link">/About</a>
+                <a href="projects.html" class="nav-link">/Works</a>
+                <a href="hackathons.html" class="nav-link">/Hack</a>
+                <a href="data_node.html" class="nav-link">/Command</a>
+                <a href="contact.html" class="nav-link">/Contact</a>
+            </div>
+        </nav>
+
+        <section id="hero">
+            <div class="section-container">
+                <div class="reveal-container flex justify-center">
+                    <h1 class="hero-title syne font-[800]">
+                        <span class="reveal-text inline-block" id="display-name">Venkat</span>
                     </h1>
-                    <div class="mt-12 max-w-2xl reveal">
-                        <p class="text-xl md:text-2xl text-gray-400">
-                            Computer Science Student & Creative Developer crafting digital experiences that blend logic with high-impact aesthetics.
+                </div>
+                <div class="reveal-container flex justify-center">
+                    <h1 class="hero-title syne font-[800]">
+                        <span class="accent-text reveal-text inline-block">Portfolio</span>
+                    </h1>
+                </div>
+                <div class="mt-8 max-w-2xl mx-auto reveal">
+                    <p class="text-xl md:text-2xl text-gray-400 font-medium" id="display-bio">
+                        <span class="text-white">Creative Technologist.</span> Automated systems and cinematic digital
+                        architecture.
+                    </p>
+                    <div class="flex items-center gap-8 mt-12 justify-center">
+                        <a href="projects.html" class="btn-futuristic hitech-widget">
+                            <div class="scan-line"></div>
+                            Enter Repository
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="preview-about" class="bg-white text-black py-40 rounded-[3rem] mx-4 my-20">
+            <div class="section-container">
+                <div class="max-w-4xl mx-auto space-y-12">
+                    <h2 class="syne text-6xl md:text-9xl font-extrabold uppercase tracking-tighter">Identity.</h2>
+                    <div
+                        class="experience-card hitech-widget bg-black/5 p-12 border-1 border-black/10 rounded-2xl hover:bg-black hover:text-white transition-all cursor-pointer">
+                        <div class="scan-line"></div>
+                        <p class="text-2xl md:text-4xl syne font-extrabold leading-tight" id="display-experience">
+                            Digital Architect. Linux Engineer. Problem Solver.</p>
+                        <div class="mt-8">
+                            <a href="about.html"
+                                class="text-xs font-black border-b-2 border-black tracking-[0.2em] uppercase">Read
+                                Transmission</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="preview-projects" class="py-40">
+            <div class="section-container">
+                <h2 class="syne text-7xl md:text-9xl font-[800] uppercase tracking-tighter mb-16">Works.</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div class="project-card hitech-widget reveal border-t-1 border-white/10">
+                        <div class="scan-line"></div>
+                        <h3 class="syne text-3xl font-black mb-4 uppercase">Latest Core</h3>
+                        <p class="text-gray-500 text-sm mb-8">Access the full project repository for technical specs.
                         </p>
-                        <div class="mt-10 flex gap-6">
-                            <a href="#projects" class="btn-bold syne">Explore Works</a>
-                            <div class="w-32 h-32 rounded-full overflow-hidden border border-white/20 hidden md:block">
-                                <img src="venkat.jpg" alt="Profile" class="w-full h-full object-cover">
-                            </div>
-                        </div>
+                        <a href="projects.html"
+                            class="text-emerald-400 font-bold uppercase text-[10px] tracking-widest">View Node</a>
+                    </div>
+                    <div class="project-card hitech-widget reveal border-t-1 border-white/10">
+                        <div class="scan-line"></div>
+                        <h3 class="syne text-3xl font-black mb-4 uppercase">Hack Memory</h3>
+                        <p class="text-gray-500 text-sm mb-8">Competitive performance data and achievements.</p>
+                        <a href="hackathons.html"
+                            class="text-emerald-400 font-bold uppercase text-[10px] tracking-widest">View Logs</a>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <!-- About Section (Intro Story) -->
-            <section id="about" class="bg-white text-black py-32 rounded-[2rem] md:rounded-[4rem] mx-2 md:mx-4">
-                <div class="max-w-5xl mx-auto">
-                    <h2 class="section-header syne font-extrabold">Who I Am</h2>
-                    <div class="grid md:grid-cols-2 gap-16 items-start">
-                        <p class="text-2xl md:text-4xl syne leading-tight font-bold reveal">
-                            "Passionate about building purposeful technology that makes an impact."
-                        </p>
-                        <div class="space-y-6 text-lg text-gray-700 reveal">
-                            <p>I'm Venkat Badhrinarayanan PV, exploring the intersections of Linux systems, C, Python, and modern web development.</p>
-                            <p>Currently engineering solutions like a smart tourist guide and a food waste reduction tracker.</p>
-                            <div class="flex gap-4 pt-6">
-                                <a href="https://github.com/venkatengineer" target="_blank" class="h-12 w-12 rounded-full border border-black flex items-center justify-center hover:bg-black hover:text-white transition">
-                                    <i class="fab fa-github"></i>
-                                </a>
-                                <a href="https://www.linkedin.com/in/venkat-badhrinarayanan-747148264/" target="_blank" class="h-12 w-12 rounded-full border border-black flex items-center justify-center hover:bg-black hover:text-white transition">
-                                    <i class="fab fa-linkedin-in"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+        <section id="contact" class="py-40">
+            <div class="section-container">
+                <h2 class="syne text-7xl md:text-[10rem] font-extrabold uppercase reveal">Establish <br><span
+                        class="accent-text">Core Link.</span></h2>
+                <div class="mt-16 reveal">
+                    <a href="contact.html" class="btn-futuristic hitech-widget text-xl px-20 py-7">
+                        <div class="scan-line"></div>
+                        Initialize
+                    </a>
                 </div>
-            </section>
-
-            <!-- Projects Section -->
-            <section id="projects" class="py-32">
-                <div class="max-w-7xl mx-auto">
-                    <div class="flex flex-col md:flex-row justify-between items-end mb-20">
-                        <h2 class="section-header syne font-extrabold mb-0">Selected<br>Works</h2>
-                        <p class="text-gray-500 uppercase tracking-widest text-sm mb-4">Crafting the future</p>
-                    </div>
-
-                    <div class="grid md:grid-cols-3 gap-8">
-                        <!-- Project 1 -->
-                        <div class="project-card reveal">
-                            <div class="text-emerald-400 text-4xl mb-6"><i class="fa-solid fa-map-location-dot"></i></div>
-                            <h3 class="syne text-2xl font-bold mb-4">Tourist Guide App</h3>
-                            <p class="text-gray-400 mb-6">Connecting travelers with local expertise for safe and authentic exploration.</p>
-                            <span class="text-xs uppercase tracking-tighter text-emerald-300 bg-emerald-950/50 px-3 py-1 rounded-full">In Development</span>
-                        </div>
-
-                        <!-- Project 2 -->
-                        <div class="project-card reveal">
-                            <div class="text-emerald-400 text-4xl mb-6"><i class="fa-solid fa-utensils"></i></div>
-                            <h3 class="syne text-2xl font-bold mb-4">Expiry Tracker</h3>
-                            <p class="text-gray-400 mb-6">Smart receipt analysis and recipe suggestions to eliminate food waste.</p>
-                            <span class="text-xs uppercase tracking-tighter text-emerald-300 bg-emerald-950/50 px-3 py-1 rounded-full">In Development</span>
-                        </div>
-
-                        <!-- Project 3 -->
-                        <div class="project-card reveal">
-                            <div class="text-emerald-400 text-4xl mb-6"><i class="fa-solid fa-lock"></i></div>
-                            <h3 class="syne text-2xl font-bold mb-4">Encryptor Lite</h3>
-                            <p class="text-gray-400 mb-6">Hiding secrets within storytelling narratives. A creative twist on cryptography.</p>
-                            <a href="https://venkatengineer.github.io/encryptor/" target="_blank" class="mt-4 inline-block text-emerald-400 font-bold">Try Live <i class="fa-solid fa-arrow-right ml-2"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Contact Section -->
-            <section id="contact" class="text-center py-40">
-                <div class="max-w-4xl mx-auto">
-                    <h2 class="syne text-6xl md:text-9xl font-extrabold mb-12">Let's<br>Talk.</h2>
-                    <a href="contact.html" class="btn-bold syne text-2xl px-16 py-6 ring-offset-4 ring-offset-black transition-all hover:ring-2 hover:ring-emerald-400">Send an Email</a>
-                    
-                    <footer class="mt-40 pt-10 border-t border-white/10 text-gray-600 uppercase text-xs tracking-[0.3em]">
-                        &copy; 2026 Venkat Badhrinarayanan PV &bull; Digital Portfolio
-                    </footer>
-                </div>
-            </section>
-
-        </div>
+            </div>
+        </section>
     </div>
 
-    <!-- Animation Scripts -->
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
 
     <script>
-        // 1. Loader Animation
-        const loader = document.getElementById('loader');
-        const counter = document.querySelector('.counter');
-        let count = 0;
+        // --- DATA SYNC ---
+        function syncData() {
+            const data = JSON.parse(localStorage.getItem('vb_portfolio_data') || '{}');
+            if (data.name) document.getElementById('display-name').innerText = data.name;
+            if (data.bio) document.getElementById('display-bio').innerHTML = `<span class="text-white">Active Node.</span> ${data.bio}`;
+            if (data.experience) document.getElementById('display-experience').innerText = data.experience;
+        }
+        syncData();
 
-        const updateCounter = setInterval(() => {
-            count += Math.floor(Math.random() * 5) + 1;
-            if (count >= 100) {
-                count = 100;
-                clearInterval(updateCounter);
-                finishLoading();
+        // --- CLI & REVEAL (WITH SKIP) ---
+        let cinematicTimeline = null;
+        const cliOverlay = document.getElementById('cli-overlay');
+        const spaceship = document.getElementById('spaceship-container');
+        const main = document.getElementById('main-content');
+        const skipBtn = document.getElementById('skip-splash');
+
+        async function skipCinematic() {
+            if (cinematicTimeline) cinematicTimeline.kill();
+            gsap.set(cliOverlay, { display: 'none', opacity: 0 });
+            gsap.set(spaceship, { display: 'none' });
+            gsap.set(main, { visibility: 'visible', opacity: 1 });
+            gsap.set(".reveal-text", { y: 0 });
+            gsap.set(".reveal", { opacity: 1, y: 0 });
+            skipBtn.remove();
+        }
+
+        skipBtn.addEventListener('click', skipCinematic);
+
+        async function startCinematic() {
+            const lines = [
+                { t: "BOOTING_VB_CORE...", d: 100 },
+                { t: "GHOST_SHELL: ON", d: 100 },
+                { t: "> help", typed: "HELP", d: 600 },
+                { t: "AUTH_LEVEL: SYSTEM_ADMIN", d: 200 },
+                { t: "> locate", typed: "LOCATE_RESOURCES", d: 800 },
+                { t: "RESOURCES: FOUND.", d: 200 },
+                { t: "> initiate", typed: "INITIATE_BOOT", d: 600 }
+            ];
+
+            const cliOutput = document.getElementById('cli-output');
+            for (let l of lines) {
+                let div = document.createElement('div');
+                div.className = 'cli-line';
+                div.innerHTML = l.t;
+                cliOutput.appendChild(div);
+                if (l.typed) await new Promise(r => setTimeout(r, l.d));
+                cliOverlay.scrollTop = cliOverlay.scrollHeight;
             }
-            counter.innerText = count + '%';
-        }, 30);
 
-        function finishLoading() {
-            const tl = gsap.timeline();
-            tl.to("#loader .counter, #loader .loading-text", {
-                y: -100,
-                opacity: 0,
-                duration: 0.8,
-                ease: "power4.in"
-            })
-            .to("#loader", {
-                height: 0,
-                duration: 1.2,
-                ease: "expo.inOut"
-            })
-            .from(".reveal-text", {
-                y: 200,
-                stagger: 0.1,
-                duration: 1,
-                ease: "power4.out"
-            }, "-=0.5")
-            .from(".hero-title", {
-                scale: 1.2,
-                opacity: 0,
-                duration: 2,
-                ease: "power4.out"
-            }, "-=1");
+            spaceship.style.display = 'block';
+            cinematicTimeline = gsap.timeline({
+                onComplete: () => {
+                    spaceship.remove(); cliOverlay.remove(); skipBtn.remove();
+                }
+            });
+
+            cinematicTimeline.to(cliOverlay, { opacity: 0, duration: 0.8 })
+                .to(spaceship, { bottom: "50%", duration: 2, ease: "power2.out" })
+                .to("#revealBeam", { opacity: 1, duration: 0.5 })
+                .set(main, { visibility: 'visible', opacity: 1 })
+                .to(spaceship, { bottom: "180%", scale: 0.8, duration: 1.8, ease: "circ.in" })
+                .from(".reveal-text", { y: "110%", stagger: 0.1, duration: 1.2, ease: "expo.out" }, "-=1.5")
+                .from(".reveal", { y: 60, opacity: 0, stagger: 0.1, duration: 1, ease: "power4.out" }, "-=1");
         }
 
-        // 2. Smooth Scroll (Lenis)
+        window.onload = startCinematic;
+
         const lenis = new Lenis();
-        function raf(time) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
 
-        // 3. Scroll Animations
         gsap.registerPlugin(ScrollTrigger);
-
-        // Storytelling section reveals
-        gsap.utils.toArray(".reveal").forEach((elem) => {
-            gsap.to(elem, {
-                scrollTrigger: {
-                    trigger: elem,
-                    start: "top 85%",
-                    toggleActions: "play none none none"
-                },
-                opacity: 1,
-                y: 0,
-                duration: 1.5,
-                ease: "power4.out",
-                stagger: 0.2
-            });
+        gsap.utils.toArray(".reveal").forEach(el => {
+            gsap.to(el, { scrollTrigger: el, opacity: 1, y: 0, duration: 1 });
         });
 
-        // Theme switch for About Section (Dark to Light)
         gsap.to("body", {
-            scrollTrigger: {
-                trigger: "#about",
-                start: "top 50%",
-                end: "bottom 50%",
-                toggleActions: "play reverse play reverse"
-            },
-            backgroundColor: "#ffffff",
-            color: "#000000",
-            duration: 0.5
+            scrollTrigger: { trigger: "#preview-about", start: "top 60%", end: "bottom 40%", toggleActions: "play reverse play reverse" },
+            backgroundColor: "#fff", color: "#000", duration: 0.5
         });
 
-        // Background color return to dark
-        ScrollTrigger.create({
-            trigger: "#projects",
-            start: "top 50%",
-            onEnter: () => gsap.to("body", { backgroundColor: "#0a0a0a", color: "#ffffff", duration: 0.5 }),
-            onLeaveBack: () => gsap.to("body", { backgroundColor: "#ffffff", color: "#000000", duration: 0.5 })
+        window.addEventListener('scroll', () => {
+            document.getElementById("progress").style.width = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100 + "%";
         });
-
     </script>
 </body>
-</html>
 
+</html>

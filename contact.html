@@ -1,78 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contact Me</title>
+  <title>Contact | Venkat Badhrinarayanan PV</title>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>
-    (function () {
-      emailjs.init("U7_sIBqAFew-M0VK_"); // Replace with your actual public key
-    })();
-  </script>
-<script defer data-domain="venkat-portfolio.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script type="text/javascript" src="https://tiiny.host/ad-script.js"></script></head>
-<body class="bg-[#f0fdf4] min-h-screen flex items-center justify-center p-6">
-  <div class="bg-white shadow-xl rounded-lg p-8 w-full max-w-lg">
-    <h2 class="text-2xl font-bold mb-6 text-center text-[#034d2d]">Contact Me</h2>
-    <form id="contact-form">
-      <div class="mb-4">
-        <label class="block text-gray-700">Name</label>
-        <input id="nameInput" type="text" name="user_name" required
-          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#9ae6b4]" />
-      </div>
-      <div class="mb-4">
-        <label class="block text-gray-700">Email</label>
-        <input id="emailInput" type="email" name="user_email" required
-          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#9ae6b4]" />
-      </div>
-      <div class="mb-4">
-        <label class="block text-gray-700">Message</label>
-        <textarea id="messageInput" name="message" rows="5" required
-          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#9ae6b4]"></textarea>
-      </div>
-      <!-- Send Button with Pastel Green + Animation -->
-      <button onclick="sendMessage()" type="button"
-        class="w-full relative bg-gradient-to-r from-[#b9fbc0] to-[#9ae6b4] text-[#034d2d] py-3 px-6 rounded-full font-semibold shadow-md overflow-hidden transition transform hover:scale-105 hover:rotate-[-1deg] focus:outline-none">
-        <span class="relative z-10">📩 Send Message</span>
-        <span class="absolute inset-0 bg-white opacity-20 blur-md -skew-x-12 left-[-100%] hover:left-[200%] transition-all duration-700"></span>
-      </button>
-    </form>
-    <p id="response" class="mt-4 text-center text-sm text-gray-600"></p>
-  </div>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
-  <script type="text/javascript">
-    function sendMessage() {
-      const name = document.getElementById("nameInput").value.trim();
-      const email = document.getElementById("emailInput").value.trim();
-      const message = document.getElementById("messageInput").value.trim();
-      const responseEl = document.getElementById("response");
+  <style>
+    :root {
+      --bg: #050505;
+      --text: #ffffff;
+      --accent: #00ffbb;
+      --alien-glow: rgba(0, 255, 187, 0.4);
+    }
 
-      if (!name || !email || !message) {
-        responseEl.textContent = "❗ Please fill out all fields.";
-        responseEl.classList.add("text-red-500");
-        return;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    .syne {
+      font-family: 'Syne', sans-serif;
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    #progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 4px;
+      background: var(--accent);
+      width: 0%;
+      z-index: 1000;
+    }
+
+    section {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 10vh 8vw;
+    }
+
+    .section-container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      font-size: clamp(3rem, 12vw, 10rem);
+      line-height: 0.9;
+      text-transform: uppercase;
+      letter-spacing: -0.04em;
+    }
+
+    .accent-text {
+      color: var(--accent);
+      -webkit-text-stroke: 1px var(--accent);
+      -webkit-text-fill-color: transparent;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    .hitech-widget {
+      transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    }
+
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      padding: 4rem;
+      border-radius: 1.5rem;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .glass-panel:hover {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.03);
+      transform: scale(1.02);
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 2.5rem;
+    }
+
+    .input-group label {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: gray;
+      margin-bottom: 1rem;
+    }
+
+    .input-group input,
+    .input-group textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: white;
+      padding: 1rem 0;
+      font-size: 1.1rem;
+      outline: none;
+      transition: border-bottom 0.3s;
+    }
+
+    .input-group input:focus,
+    .input-group textarea:focus {
+      border-bottom: 1px solid var(--accent);
+    }
+
+    .btn-futuristic {
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 1.25rem 4rem;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      text-transform: uppercase;
+      border-radius: 4px;
+      transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+      background: rgba(0, 255, 187, 0.05);
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .btn-futuristic:hover {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 0 50px var(--alien-glow);
+      transform: translateY(-5px);
+    }
+
+    .nav-link {
+      position: relative;
+    }
+
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      right: 0;
+      width: 0%;
+      height: 2px;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
+
+    .nav-link:hover::after {
+      width: 100%;
+      left: 0;
+    }
+
+    @media (max-width: 768px) {
+      .page-header {
+        font-size: 15vw;
       }
 
-      const templateParams = {
-        name: name,
-        email: email,
-        message: message,
-      };
-
-      emailjs.send('service_r6i5d5a', 'template_fyc27x6', templateParams)
-        .then((response) => {
-          responseEl.textContent = "✅ Message sent successfully!";
-          responseEl.classList.remove("text-red-500");
-          responseEl.classList.add("text-green-600");
-          document.getElementById("contact-form").reset();
-        }, (error) => {
-          responseEl.textContent = "❌ Failed to send message. Please try again.";
-          responseEl.classList.remove("text-green-600");
-          responseEl.classList.add("text-red-500");
-          console.error("FAILED...", error);
-        });
+      .glass-panel {
+        padding: 2rem;
+      }
     }
+  </style>
+</head>
+
+<body>
+
+  <div id="progress"></div>
+
+  <nav class="fixed top-0 left-0 w-full p-8 z-[500] flex justify-between items-center mix-blend-difference">
+    <a href="index.html" class="syne font-extrabold text-2xl uppercase tracking-tighter">VB.<span
+        class="text-emerald-400">EXE</span></a>
+    <div class="hidden md:flex gap-10 uppercase text-[9px] font-bold tracking-[0.25em] mono">
+      <a href="index.html" class="nav-link">/Home</a>
+      <a href="about.html" class="nav-link">/About</a>
+      <a href="projects.html" class="nav-link">/Works</a>
+      <a href="hackathons.html" class="nav-link">/Hack</a>
+      <a href="data_node.html" class="nav-link">/Command</a>
+      <a href="contact.html" class="nav-link text-emerald-400">/Contact</a>
+    </div>
+  </nav>
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+
+      <section id="contact-hero">
+        <div class="section-container">
+          <h1 class="page-header syne font-[800]">
+            <span class="block">The</span>
+            <span class="block accent-text">Link.</span>
+          </h1>
+          <div class="mt-20 glass-panel hitech-widget reveal" id="form-container">
+            <form id="contact-form">
+              <div class="input-group">
+                <label>// Node_Identifier</label>
+                <input type="text" name="user_name" required placeholder="GUEST_USER" />
+              </div>
+              <div class="input-group">
+                <label>// Payload_Protocol (Message)</label>
+                <textarea name="message" required rows="4" placeholder="INITIATING_PROTOCOL_TRANS..."></textarea>
+              </div>
+              <button type="submit" class="btn-futuristic" id="submit-btn">Execute Transmission</button>
+            </form>
+            <div id="status-message" class="hidden mt-8 mono text-xs uppercase tracking-widest text-emerald-400"></div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="py-20 bg-transparent text-center">
+        <div class="section-container">
+          <div class="flex flex-col md:flex-row justify-between items-center gap-12 opacity-60">
+            <div class="mono text-[10px] tracking-[0.5em] uppercase">Auth: Venkat_Badhrinarayanan_PV</div>
+            <div class="flex gap-10">
+              <a href="https://github.com/venkatengineer" target="_blank"
+                class="hover:text-emerald-400 transition">Github</a>
+              <a href="https://www.linkedin.com/in/venkat-badhrinarayanan-747148264/" target="_blank"
+                class="hover:text-emerald-400 transition">Linkedin</a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+
+  <script>
+    const lenis = new Lenis();
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    function initAnimations() {
+      gsap.utils.toArray(".reveal").forEach(el => {
+        gsap.to(el, { scrollTrigger: el, opacity: 1, y: 0, duration: 1 });
+      });
+    }
+    window.onload = initAnimations;
+
+    const form = document.getElementById('contact-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const statusMsg = document.getElementById('status-message');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      submitBtn.textContent = 'TRANSMITTING...';
+      submitBtn.disabled = true;
+
+      setTimeout(() => {
+        form.reset();
+        submitBtn.textContent = 'TRANSMISSION COMPLETE';
+        statusMsg.textContent = '>> DATA_PACKET_SENT_SUCCESSFULLY.';
+        statusMsg.classList.remove('hidden');
+        gsap.from(statusMsg, { opacity: 0, y: 10, duration: 0.5 });
+      }, 1000);
+    });
+
+    window.addEventListener('scroll', () => {
+      document.getElementById("progress").style.width = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100 + "%";
+    });
   </script>
 </body>
+
 </html>
