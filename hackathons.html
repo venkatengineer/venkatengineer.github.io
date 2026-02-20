@@ -72,11 +72,13 @@
             margin: 0 auto;
         }
 
+        /* --- CLIPPING FIXES --- */
         .page-header {
             font-size: clamp(3rem, 12vw, 10rem);
-            line-height: 0.9;
+            line-height: 1.2;
             text-transform: uppercase;
             letter-spacing: -0.04em;
+            padding-bottom: 20px;
         }
 
         .accent-text {
@@ -90,8 +92,77 @@
             transform: translateY(40px);
         }
 
+        /* --- INDUSTRIAL UI UPGRADE --- */
         .hitech-widget {
+            position: relative;
             transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        /* Corner Brackets */
+        .hitech-widget::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 15px;
+            height: 15px;
+            border-top: 2px solid var(--accent);
+            border-right: 2px solid var(--accent);
+            opacity: 0;
+            transition: all 0.4s;
+        }
+
+        .hitech-widget::before {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 15px;
+            height: 15px;
+            border-bottom: 2px solid var(--accent);
+            border-left: 2px solid var(--accent);
+            opacity: 0;
+            transition: all 0.4s;
+        }
+
+        .hitech-widget:hover::after,
+        .hitech-widget:hover::before {
+            opacity: 1;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 25px;
+            height: 25px;
+        }
+
+        /* Scanning Line */
+        .scan-line {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .hitech-widget:hover .scan-line {
+            animation: scan 1.5s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes scan {
+            0% {
+                top: -10%;
+            }
+
+            100% {
+                top: 110%;
+            }
         }
 
         .arena-grid {
@@ -108,7 +179,6 @@
             padding: 4rem;
             position: relative;
             text-align: left;
-            border-radius: 12px;
         }
 
         .event-card:hover {
@@ -135,6 +205,29 @@
             gap: 0.5rem;
             border-left: 1px solid rgba(255, 255, 255, 0.1);
             padding-left: 1.5rem;
+        }
+
+        .btn-futuristic {
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 1.25rem 3.5rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-radius: 4px;
+            transition: all 0.4s;
+            background: rgba(0, 255, 187, 0.05);
+            cursor: pointer;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-futuristic:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 50px var(--alien-glow);
+            transform: scale(1.05);
         }
 
         .nav-link {
@@ -212,68 +305,22 @@
 
             <section id="arena-grid-section">
                 <div class="section-container">
-                    <div class="arena-grid">
-
-                        <div class="event-card hitech-widget reveal">
-                            <span class="status-badge">WINNER // 1st Place</span>
-                            <h2 class="syne text-4xl font-black uppercase mb-4">Code Crusade</h2>
-                            <p class="text-gray-500 text-lg mb-10">Advanced algorithmic challenges focusing on data
-                                structures and system architecture optimization.</p>
-                            <div class="grid grid-cols-2 gap-8 pt-6 border-t border-white/5">
-                                <div class="stat-box">
-                                    <span class="text-[10px] mono text-gray-600 uppercase">Rank</span>
-                                    <span class="text-2xl syne font-black text-white">#01</span>
-                                </div>
-                                <div class="stat-box">
-                                    <span class="text-[10px] mono text-gray-600 uppercase">Year</span>
-                                    <span class="text-2xl syne font-black text-white">2024</span>
-                                </div>
-                            </div>
+                    <div class="arena-grid" id="hackathon-grid">
+                        <!-- Dynamic Hackathon Cards will appear here -->
+                        <div
+                            class="text-center w-full col-span-full py-20 opacity-30 mono text-xs uppercase tracking-widest">
+                            Scanning_Arena_Nodes...
                         </div>
-
-                        <div class="event-card hitech-widget reveal">
-                            <span class="status-badge">FINALIST // Top 5</span>
-                            <h2 class="syne text-4xl font-black uppercase mb-4">Hack-The-Future</h2>
-                            <p class="text-gray-500 text-lg mb-10">Sustainable tech development marathon aimed at
-                                creating circular economy digital blueprints.</p>
-                            <div class="grid grid-cols-2 gap-8 pt-6 border-t border-white/5">
-                                <div class="stat-box">
-                                    <span class="text-[10px] mono text-gray-600 uppercase">Rank</span>
-                                    <span class="text-2xl syne font-black text-white">#03</span>
-                                </div>
-                                <div class="stat-box">
-                                    <span class="text-[10px] mono text-gray-600 uppercase">Year</span>
-                                    <span class="text-2xl syne font-black text-white">2023</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="event-card hitech-widget reveal">
-                            <span class="status-badge">ACTIVE // Arena Entry</span>
-                            <h2 class="syne text-4xl font-black uppercase mb-4" id="custom-event-title">Custom Node</h2>
-                            <p class="text-gray-500 text-lg mb-10" id="custom-event-desc">Dynamic data entry from
-                                Command Center will appear here for specialized achievements.</p>
-                            <div class="grid grid-cols-2 gap-8 pt-6 border-t border-white/5">
-                                <div class="stat-box">
-                                    <span class="text-[10px] mono text-gray-600 uppercase">Status</span>
-                                    <span class="text-2xl syne font-black text-white">READY</span>
-                                </div>
-                                <div class="stat-box">
-                                    <span class="text-[10px] mono text-gray-600 uppercase">Update</span>
-                                    <span class="text-2xl syne font-black text-white">LIVE</span>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </section>
 
             <section id="footer-nav" class="py-40">
                 <div class="section-container text-center">
-                    <a href="contact.html"
-                        class="btn-futuristic hitech-widget text-lg border-1 border-emerald-400 p-8 rounded-lg inline-block text-emerald-400">Establish
-                        Core Link</a>
+                    <a href="contact.html" class="btn-futuristic hitech-widget inline-block text-emerald-400">
+                        <div class="scan-line"></div>
+                        Establish Core Link
+                    </a>
                 </div>
             </section>
         </div>
@@ -285,14 +332,51 @@
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
 
     <script>
-        function syncData() {
+        const grid = document.getElementById('hackathon-grid');
+
+        function loadHackathons() {
+            let events = JSON.parse(localStorage.getItem('vb_hackathons') || '[]');
+
+            // Default "Legacy" events if empty
+            if (events.length === 0) {
+                events = [
+                    { title: "Code Crusade", rank: "WINNER // 1st Place", year: "2024", desc: "Advanced algorithmic challenges focusing on data structures and system architecture optimization." },
+                    { title: "Hack-The-Future", rank: "FINALIST // Top 5", year: "2023", desc: "Sustainable tech development marathon aimed at creating circular economy digital blueprints." }
+                ];
+            }
+
+            grid.innerHTML = '';
+            events.forEach(event => {
+                const card = document.createElement('div');
+                card.className = 'event-card hitech-widget reveal';
+                card.innerHTML = `
+                    <div class="scan-line"></div>
+                    <span class="status-badge">${event.rank}</span>
+                    <h2 class="syne text-4xl font-black uppercase mb-4">${event.title}</h2>
+                    <p class="text-gray-500 text-lg mb-10">${event.desc}</p>
+                    <div class="grid grid-cols-2 gap-8 pt-6 border-t border-white/5">
+                        <div class="stat-box">
+                            <span class="text-[10px] mono text-gray-600 uppercase">Status</span>
+                            <span class="text-2xl syne font-black text-white">RECORDS</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="text-[10px] mono text-gray-600 uppercase">Year</span>
+                            <span class="text-2xl syne font-black text-white">${event.year}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            initAnimations();
+        }
+
+        function syncGlobal() {
             const data = JSON.parse(localStorage.getItem('vb_portfolio_data') || '{}');
-            if (data.experience) {
-                document.getElementById('custom-event-desc').innerText = data.experience;
-                if (data.name) document.getElementById('display-experience').innerText = `// Simulation_Mode: ${data.name.toUpperCase()} // Performance_Data: Loaded`;
+            if (data.name) {
+                document.getElementById('display-experience').innerText = `// Simulation_Mode: ${data.name.toUpperCase()} // Performance_Data: Loaded`;
             }
         }
-        syncData();
 
         function initAnimations() {
             gsap.utils.toArray(".reveal").forEach(el => {
@@ -305,7 +389,10 @@
         requestAnimationFrame(raf);
 
         gsap.registerPlugin(ScrollTrigger);
-        window.onload = initAnimations;
+        window.onload = () => {
+            syncGlobal();
+            loadHackathons();
+        };
 
         window.addEventListener('scroll', () => {
             document.getElementById("progress").style.width = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100 + "%";

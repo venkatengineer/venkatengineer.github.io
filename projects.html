@@ -72,11 +72,13 @@
             margin: 0 auto;
         }
 
+        /* --- CLIPPING FIXES --- */
         .page-header {
             font-size: clamp(3rem, 12vw, 10rem);
-            line-height: 0.9;
+            line-height: 1.2;
             text-transform: uppercase;
             letter-spacing: -0.04em;
+            padding-bottom: 20px;
         }
 
         .accent-text {
@@ -90,26 +92,94 @@
             transform: translateY(40px);
         }
 
-        /* --- INDUSTRIAL PROJECT CARDS --- */
+        /* --- INDUSTRIAL UI UPGRADE --- */
         .project-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 4rem;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
             width: 100%;
             margin-top: 5rem;
         }
 
         .hitech-widget {
+            position: relative;
             transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        /* Corner Brackets */
+        .hitech-widget::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 15px;
+            height: 15px;
+            border-top: 2px solid var(--accent);
+            border-right: 2px solid var(--accent);
+            opacity: 0;
+            transition: all 0.4s;
+        }
+
+        .hitech-widget::before {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 15px;
+            height: 15px;
+            border-bottom: 2px solid var(--accent);
+            border-left: 2px solid var(--accent);
+            opacity: 0;
+            transition: all 0.4s;
+        }
+
+        .hitech-widget:hover::after,
+        .hitech-widget:hover::before {
+            opacity: 1;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 25px;
+            height: 25px;
+        }
+
+        /* Scanning Line */
+        .scan-line {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .hitech-widget:hover .scan-line {
+            animation: scan 1.5s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes scan {
+            0% {
+                top: -10%;
+            }
+
+            100% {
+                top: 110%;
+            }
         }
 
         .work-card {
             background: #0d0d0d;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 4rem;
-            position: relative;
-            overflow: hidden;
-            border-radius: 12px;
+            padding: 3.5rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 450px;
         }
 
         .work-card:hover {
@@ -117,6 +187,21 @@
             transform: translateY(-10px);
             background: #111;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        /* FIXED REPO NAME CLIPPING */
+        .repo-title {
+            word-break: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            min-height: 3.6em;
+            /* Allow up to 3 lines */
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
         .tag {
@@ -128,6 +213,29 @@
             border-radius: 4px;
             text-transform: uppercase;
             letter-spacing: 0.1em;
+        }
+
+        .btn-futuristic {
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 1.25rem 3.5rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-radius: 4px;
+            transition: all 0.4s;
+            background: rgba(0, 255, 187, 0.05);
+            cursor: pointer;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-futuristic:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 50px var(--alien-glow);
+            transform: scale(1.05);
         }
 
         .nav-link {
@@ -164,7 +272,8 @@
             }
 
             .work-card {
-                padding: 2.5rem;
+                padding: 2rem;
+                min-height: auto;
             }
         }
     </style>
@@ -191,12 +300,12 @@
         <div id="smooth-content">
 
             <section id="works-hero">
-                <div class="section-container">
+                <div class="section-container text-center">
                     <h1 class="page-header syne font-[800]">
                         <span class="block">The</span>
                         <span class="block accent-text">Repository.</span>
                     </h1>
-                    <div class="mt-16 text-center reveal">
+                    <div class="mt-16 reveal">
                         <p class="text-xs md:text-sm text-emerald-400 mono uppercase tracking-[0.5em]" id="repo-status">
                             // Accessing_GitHub_API...
                         </p>
@@ -204,7 +313,7 @@
                 </div>
             </section>
 
-            <section id="work-grid-section">
+            <section id="work-grid-section" class="!justify-start py-20">
                 <div class="section-container">
                     <div class="project-grid" id="github-repos-grid">
                         <div
@@ -220,9 +329,10 @@
                     <h2 class="syne text-5xl md:text-7xl font-extrabold uppercase reveal">View my <br><span
                             class="accent-text">Hack Experience.</span></h2>
                     <div class="reveal">
-                        <a href="hackathons.html"
-                            class="btn-futuristic hitech-widget text-lg border-1 border-emerald-400 p-8 rounded-lg inline-block text-emerald-400">Enter
-                            Arena</a>
+                        <a href="hackathons.html" class="btn-futuristic hitech-widget inline-block text-emerald-400">
+                            <div class="scan-line"></div>
+                            Enter Arena
+                        </a>
                     </div>
                 </div>
             </section>
@@ -251,17 +361,18 @@
                     const card = document.createElement('div');
                     card.className = 'work-card hitech-widget reveal';
                     card.innerHTML = `
-                        <div class="flex justify-between items-start mb-12">
+                        <div class="scan-line"></div>
+                        <div class="flex justify-between items-start mb-10">
                             <span class="tag">${repo.language || 'Code'}</span>
                             <i class="fa-brands fa-github text-gray-700 text-2xl"></i>
                         </div>
-                        <h2 class="syne text-3xl font-black uppercase mb-6">${repo.name.replace(/-/g, ' ')}</h2>
-                        <p class="text-gray-500 text-lg mb-10 h-24 overflow-hidden">${repo.description || 'Automated technical repository entry.'}</p>
-                        <div class="flex gap-4 mb-12 flex-wrap">
-                            <span class="mono text-[10px] text-gray-400">#Stars: ${repo.stargazers_count}</span>
-                            <span class="mono text-[10px] text-gray-400">#Forks: ${repo.forks_count}</span>
+                        <h2 class="syne text-2xl font-black uppercase repo-title">${repo.name.replace(/-/g, ' ')}</h2>
+                        <p class="text-gray-500 text-sm mb-auto line-clamp-3 mb-10">${repo.description || 'Automated technical repository entry.'}</p>
+                        <div class="flex gap-4 mb-10 flex-wrap mt-6">
+                            <span class="mono text-[9px] text-gray-400 py-1 px-3 border border-white/5 rounded">#STARS: ${repo.stargazers_count}</span>
+                            <span class="mono text-[9px] text-gray-400 py-1 px-3 border border-white/5 rounded">#FORKS: ${repo.forks_count}</span>
                         </div>
-                        <a href="${repo.html_url}" target="_blank" class="text-xs font-black tracking-widest border-b-1 border-emerald-400 text-emerald-400 uppercase">Access Link</a>
+                        <a href="${repo.html_url}" target="_blank" class="text-[10px] font-black tracking-widest border-b-1 border-emerald-400 text-emerald-400 uppercase w-fit inline-block">Access Link</a>
                     `;
                     grid.appendChild(card);
                 });

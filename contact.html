@@ -73,11 +73,13 @@
       margin: 0 auto;
     }
 
+    /* --- CLIPPING FIXES --- */
     .page-header {
       font-size: clamp(3rem, 12vw, 10rem);
-      line-height: 0.9;
+      line-height: 1.2;
       text-transform: uppercase;
       letter-spacing: -0.04em;
+      padding-bottom: 20px;
     }
 
     .accent-text {
@@ -91,8 +93,77 @@
       transform: translateY(40px);
     }
 
+    /* --- INDUSTRIAL UI UPGRADE --- */
     .hitech-widget {
+      position: relative;
       transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    /* Corner Brackets */
+    .hitech-widget::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 15px;
+      height: 15px;
+      border-top: 2px solid var(--accent);
+      border-right: 2px solid var(--accent);
+      opacity: 0;
+      transition: all 0.4s;
+    }
+
+    .hitech-widget::before {
+      content: '';
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      width: 15px;
+      height: 15px;
+      border-bottom: 2px solid var(--accent);
+      border-left: 2px solid var(--accent);
+      opacity: 0;
+      transition: all 0.4s;
+    }
+
+    .hitech-widget:hover::after,
+    .hitech-widget:hover::before {
+      opacity: 1;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      width: 25px;
+      height: 25px;
+    }
+
+    /* Scanning Line */
+    .scan-line {
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0;
+      z-index: 10;
+    }
+
+    .hitech-widget:hover .scan-line {
+      animation: scan 1.5s linear infinite;
+      opacity: 0.5;
+    }
+
+    @keyframes scan {
+      0% {
+        top: -10%;
+      }
+
+      100% {
+        top: 110%;
+      }
     }
 
     .glass-panel {
@@ -100,7 +171,6 @@
       border: 1px solid rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(20px);
       padding: 4rem;
-      border-radius: 1.5rem;
       width: 100%;
       max-width: 800px;
       margin: 0 auto;
@@ -157,6 +227,8 @@
       background: rgba(0, 255, 187, 0.05);
       cursor: pointer;
       width: 100%;
+      position: relative;
+      overflow: hidden;
     }
 
     .btn-futuristic:hover {
@@ -225,6 +297,7 @@
             <span class="block accent-text">Link.</span>
           </h1>
           <div class="mt-20 glass-panel hitech-widget reveal" id="form-container">
+            <div class="scan-line"></div>
             <form id="contact-form">
               <div class="input-group">
                 <label>// Node_Identifier</label>
@@ -234,7 +307,10 @@
                 <label>// Payload_Protocol (Message)</label>
                 <textarea name="message" required rows="4" placeholder="INITIATING_PROTOCOL_TRANS..."></textarea>
               </div>
-              <button type="submit" class="btn-futuristic" id="submit-btn">Execute Transmission</button>
+              <button type="submit" class="btn-futuristic" id="submit-btn" style="overflow: hidden;">
+                <div class="scan-line"></div>
+                Execute Transmission
+              </button>
             </form>
             <div id="status-message" class="hidden mt-8 mono text-xs uppercase tracking-widest text-emerald-400"></div>
           </div>

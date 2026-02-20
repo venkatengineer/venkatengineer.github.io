@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Data Node | Command Center</title>
+    <title>Command Center | Data Node</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,11 +36,6 @@
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
             line-height: 1.6;
-            background-image:
-                radial-gradient(circle at 50% 50%, rgba(0, 255, 187, 0.03) 0%, transparent 50%),
-                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 100% 100%, 50px 50px, 50px 50px;
         }
 
         .syne {
@@ -51,6 +46,16 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
+        #progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: var(--accent);
+            width: 0%;
+            z-index: 1000;
+        }
+
         section {
             width: 100%;
             min-height: 100vh;
@@ -58,18 +63,114 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 10vh 5vw;
+            padding: 10vh 8vw;
         }
 
-        .glass-card {
+        .section-container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* --- CLIPPING FIXES --- */
+        .page-header {
+            font-size: clamp(3rem, 12vw, 10rem);
+            line-height: 1.2;
+            text-transform: uppercase;
+            letter-spacing: -0.04em;
+            padding-bottom: 20px;
+        }
+
+        .accent-text {
+            color: var(--accent);
+            -webkit-text-stroke: 1px var(--accent);
+            -webkit-text-fill-color: transparent;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        /* --- INDUSTRIAL UI UPGRADE --- */
+        .hitech-widget {
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        /* Corner Brackets */
+        .hitech-widget::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 15px;
+            height: 15px;
+            border-top: 2px solid var(--accent);
+            border-right: 2px solid var(--accent);
+            opacity: 0;
+            transition: all 0.4s;
+        }
+
+        .hitech-widget::before {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 15px;
+            height: 15px;
+            border-bottom: 2px solid var(--accent);
+            border-left: 2px solid var(--accent);
+            opacity: 0;
+            transition: all 0.4s;
+        }
+
+        .hitech-widget:hover::after,
+        .hitech-widget:hover::before {
+            opacity: 1;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 25px;
+            height: 25px;
+        }
+
+        /* Scanning Line */
+        .scan-line {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .hitech-widget:hover .scan-line {
+            animation: scan 1.5s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes scan {
+            0% {
+                top: -10%;
+            }
+
+            100% {
+                top: 110%;
+            }
+        }
+
+        .glass-panel {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
             padding: 4rem;
-            border-radius: 1.5rem;
             width: 100%;
-            max-width: 900px;
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
         }
 
         .input-group {
@@ -81,7 +182,7 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             text-transform: uppercase;
-            letter-spacing: 0.3em;
+            letter-spacing: 0.25em;
             color: var(--accent);
             margin-bottom: 1rem;
         }
@@ -90,12 +191,12 @@
         .input-group textarea {
             width: 100%;
             background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
-            padding: 1.25rem;
+            padding: 1.5rem;
+            border-radius: 8px;
             font-size: 1rem;
             outline: none;
-            border-radius: 8px;
             transition: all 0.3s;
         }
 
@@ -103,50 +204,57 @@
         .input-group textarea:focus {
             border-color: var(--accent);
             background: rgba(0, 255, 187, 0.05);
-            box-shadow: 0 0 20px rgba(0, 255, 187, 0.1);
         }
 
         .btn-futuristic {
             border: 1px solid var(--accent);
             color: var(--accent);
-            padding: 1.5rem 4rem;
+            padding: 1.25rem 4rem;
             font-family: 'Syne', sans-serif;
             font-weight: 800;
             text-transform: uppercase;
-            border-radius: 8px;
-            transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            border-radius: 4px;
+            transition: all 0.4s;
             background: rgba(0, 255, 187, 0.05);
             cursor: pointer;
             width: 100%;
-            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
         }
 
         .btn-futuristic:hover {
             background: var(--accent);
             color: #000;
             box-shadow: 0 0 50px var(--alien-glow);
-            transform: translateY(-5px);
         }
 
-        .status-pill {
-            display: inline-block;
-            padding: 4px 12px;
-            background: rgba(0, 255, 187, 0.1);
-            color: var(--accent);
-            border-radius: 100px;
+        .delete-btn {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: #ff4444;
+            padding: 0.5rem 1rem;
             font-size: 10px;
-            font-weight: 700;
-            margin-bottom: 2rem;
             text-transform: uppercase;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 2rem 4rem;
-            z-index: 1000;
+        .delete-btn:hover {
+            background: #ff4444;
+            color: white;
+        }
+
+        .event-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .nav-link {
@@ -161,7 +269,7 @@
             width: 0%;
             height: 2px;
             background: var(--accent);
-            transition: width 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            transition: width 0.3s;
         }
 
         .nav-link:hover::after {
@@ -170,11 +278,11 @@
         }
 
         @media (max-width: 768px) {
-            .glass-card {
-                padding: 2rem;
+            .page-header {
+                font-size: 15vw;
             }
 
-            nav {
+            .glass-panel {
                 padding: 2rem;
             }
         }
@@ -183,7 +291,9 @@
 
 <body>
 
-    <nav class="flex justify-between items-center mix-blend-difference">
+    <div id="progress"></div>
+
+    <nav class="fixed top-0 left-0 w-full p-8 z-[500] flex justify-between items-center mix-blend-difference">
         <a href="index.html" class="syne font-extrabold text-2xl uppercase tracking-tighter">VB.<span
                 class="text-emerald-400">EXE</span></a>
         <div class="hidden md:flex gap-10 uppercase text-[9px] font-bold tracking-[0.25em] mono">
@@ -196,68 +306,184 @@
         </div>
     </nav>
 
-    <section>
-        <div class="glass-card">
-            <span class="status-pill">// Node_Command_Center_Active</span>
-            <h1 class="syne text-5xl md:text-7xl font-black uppercase mb-12 tracking-tighter">Data <br><span
-                    class="text-emerald-400">Insertion.</span></h1>
+    <div id="smooth-wrapper">
+        <div id="smooth-content">
 
-            <form id="data-form">
-                <div class="input-group">
-                    <label>Identity_Alias</label>
-                    <input type="text" id="full-name" placeholder="Venkat Badhrinarayanan PV" />
+            <section id="command-hero">
+                <div class="section-container">
+                    <h1 class="page-header syne font-[800]">
+                        <span class="block">The</span>
+                        <span class="block accent-text">Console.</span>
+                    </h1>
+                    <div class="mt-16 text-center reveal">
+                        <p class="text-xs text-gray-500 mono uppercase tracking-[0.5em]">// Node_Config:
+                            Manual_Override_Active</p>
+                    </div>
+
+                    <!-- Global Data Form -->
+                    <div class="mt-20 glass-panel hitech-widget reveal mb-20">
+                        <div class="scan-line"></div>
+                        <h2 class="syne text-2xl font-black uppercase mb-10 text-emerald-400">// Global_Profile_Override
+                        </h2>
+                        <form id="data-form">
+                            <div class="input-group">
+                                <label>// Target_Alias (Name)</label>
+                                <input type="text" id="input-name" placeholder="VENKAT" />
+                            </div>
+                            <div class="input-group">
+                                <label>// Synthetic_Bio</label>
+                                <textarea id="input-bio" rows="3" placeholder="Creative Technologist..."></textarea>
+                            </div>
+                            <div class="input-group">
+                                <label>// Core_Operational_Status (Experience)</label>
+                                <textarea id="input-experience" rows="3" placeholder="Digital Architect..."></textarea>
+                            </div>
+                            <button type="submit" class="btn-futuristic">
+                                <div class="scan-line"></div>
+                                Upload Global Data
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Hackathon Event Manager -->
+                    <div class="glass-panel hitech-widget reveal">
+                        <div class="scan-line"></div>
+                        <h2 class="syne text-2xl font-black uppercase mb-10 text-emerald-400">// Arena_Node_Manager
+                            (Hackathons)</h2>
+
+                        <div id="event-list" class="mb-10">
+                            <!-- Events will be listed here -->
+                        </div>
+
+                        <form id="add-event-form" class="border-t border-white/10 pt-10">
+                            <div class="input-group">
+                                <label>// New_Event_Title</label>
+                                <input type="text" id="event-title" required placeholder="HACKATHON_NAME" />
+                            </div>
+                            <div class="grid grid-cols-2 gap-8 mb-8">
+                                <div class="input-group mb-0">
+                                    <label>// Rank_Obtained</label>
+                                    <input type="text" id="event-rank" required placeholder="WINNER / TOP_10" />
+                                </div>
+                                <div class="input-group mb-0">
+                                    <label>// Temporal_Sync (Year)</label>
+                                    <input type="text" id="event-year" required placeholder="2024" />
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>// Mission_Objectives (Description)</label>
+                                <textarea id="event-desc" rows="3" required
+                                    placeholder="Mission goal and tech stack used..."></textarea>
+                            </div>
+                            <button type="submit" class="btn-futuristic">
+                                <div class="scan-line"></div>
+                                Add Event to Arena
+                            </button>
+                        </form>
+
+                        <div id="save-status"
+                            class="hidden mt-8 mono text-xs uppercase tracking-widest text-emerald-400">>>
+                            DATA_PACKET_STABILIZED.</div>
+                    </div>
                 </div>
+            </section>
 
-                <div class="input-group">
-                    <label>Core_Description</label>
-                    <textarea id="bio-text" rows="4"
-                        placeholder="Creative Technologist. Automated systems and cinematic digital architecture."></textarea>
-                </div>
-
-                <div class="input-group">
-                    <label>Custom_Experience_Entry</label>
-                    <textarea id="experience-text" rows="4"
-                        placeholder="Manual entry for timeline or specific achievements..."></textarea>
-                </div>
-
-                <button type="submit" class="btn-futuristic">Commit to Memory</button>
-            </form>
-
-            <div id="save-msg"
-                class="hidden mt-8 text-center text-emerald-400 mono text-[10px] uppercase tracking-widest animate-pulse">
-                >> DATA_COMMITTED_SUCCESSFULLY. REFRESHING_NODES...
-            </div>
         </div>
-    </section>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
 
     <script>
-        const form = document.getElementById('data-form');
-        const saveMsg = document.getElementById('save-msg');
+        const lenis = new Lenis();
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
 
-        // Load existing data
-        window.addEventListener('load', () => {
-            const data = JSON.parse(localStorage.getItem('vb_portfolio_data') || '{}');
-            if (data.name) document.getElementById('full-name').value = data.name;
-            if (data.bio) document.getElementById('bio-text').value = data.bio;
-            if (data.experience) document.getElementById('experience-text').value = data.experience;
+        gsap.registerPlugin(ScrollTrigger);
+
+        function initAnimations() {
+            gsap.utils.toArray(".reveal").forEach(el => {
+                gsap.to(el, { scrollTrigger: el, opacity: 1, y: 0, duration: 1 });
+            });
+        }
+        window.onload = initAnimations;
+
+        const dataForm = document.getElementById('data-form');
+        const eventForm = document.getElementById('add-event-form');
+        const eventList = document.getElementById('event-list');
+        const saveStatus = document.getElementById('save-status');
+
+        // Initial Data Load
+        const savedGlobal = JSON.parse(localStorage.getItem('vb_portfolio_data') || '{}');
+        if (savedGlobal.name) document.getElementById('input-name').value = savedGlobal.name;
+        if (savedGlobal.bio) document.getElementById('input-bio').value = savedGlobal.bio;
+        if (savedGlobal.experience) document.getElementById('input-experience').value = savedGlobal.experience;
+
+        let hackEvents = JSON.parse(localStorage.getItem('vb_hackathons') || '[]');
+
+        function renderEvents() {
+            eventList.innerHTML = hackEvents.length ? '' : '<p class="opacity-30 mono text-center py-10">// NO_EVENTS_DETECTED</p>';
+            hackEvents.forEach((event, index) => {
+                const div = document.createElement('div');
+                div.className = 'event-item';
+                div.innerHTML = `
+                    <div>
+                        <p class="mono text-xs text-emerald-400">${event.year} | ${event.rank}</p>
+                        <h4 class="syne font-black uppercase text-lg">${event.title}</h4>
+                    </div>
+                    <button class="delete-btn" onclick="deleteEvent(${index})">Deconstruct</button>
+                `;
+                eventList.appendChild(div);
+            });
+        }
+
+        function deleteEvent(index) {
+            hackEvents.splice(index, 1);
+            localStorage.setItem('vb_hackathons', JSON.stringify(hackEvents));
+            renderEvents();
+            showStatus();
+        }
+
+        function showStatus() {
+            saveStatus.classList.remove('hidden');
+            gsap.from("#save-status", { opacity: 0, y: 10, duration: 0.5 });
+            setTimeout(() => { saveStatus.classList.add('hidden'); }, 3000);
+        }
+
+        // Global Data Submit
+        dataForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('input-name').value,
+                bio: document.getElementById('input-bio').value,
+                experience: document.getElementById('input-experience').value
+            };
+            localStorage.setItem('vb_portfolio_data', JSON.stringify(data));
+            showStatus();
         });
 
-        form.addEventListener('submit', (e) => {
+        // Event Submit
+        eventForm.addEventListener('submit', (e) => {
             e.preventDefault();
-
-            const data = {
-                name: document.getElementById('full-name').value,
-                bio: document.getElementById('bio-text').value,
-                experience: document.getElementById('experience-text').value,
-                timestamp: new Date().toISOString()
+            const newEvent = {
+                title: document.getElementById('event-title').value,
+                rank: document.getElementById('event-rank').value,
+                year: document.getElementById('event-year').value,
+                desc: document.getElementById('event-desc').value
             };
+            hackEvents.unshift(newEvent); // Add to top
+            localStorage.setItem('vb_hackathons', JSON.stringify(hackEvents));
+            eventForm.reset();
+            renderEvents();
+            showStatus();
+        });
 
-            localStorage.setItem('vb_portfolio_data', JSON.stringify(data));
+        renderEvents();
 
-            saveMsg.classList.remove('hidden');
-            setTimeout(() => {
-                saveMsg.classList.add('hidden');
-            }, 3000);
+        window.addEventListener('scroll', () => {
+            document.getElementById("progress").style.width = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100 + "%";
         });
     </script>
 </body>

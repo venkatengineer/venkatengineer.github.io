@@ -72,11 +72,13 @@
             margin: 0 auto;
         }
 
+        /* --- CLIPPING FIXES --- */
         .page-header {
             font-size: clamp(3rem, 12vw, 10rem);
-            line-height: 0.9;
+            line-height: 1.2;
             text-transform: uppercase;
             letter-spacing: -0.04em;
+            padding-bottom: 20px;
         }
 
         .accent-text {
@@ -90,8 +92,77 @@
             transform: translateY(40px);
         }
 
+        /* --- INDUSTRIAL UI UPGRADE --- */
         .hitech-widget {
+            position: relative;
             transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            overflow: hidden;
+            border-radius: 12px;
+        }
+
+        /* Corner Brackets */
+        .hitech-widget::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 15px;
+            height: 15px;
+            border-top: 2px solid var(--accent);
+            border-right: 2px solid var(--accent);
+            opacity: 0;
+            transition: all 0.4s;
+        }
+
+        .hitech-widget::before {
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            width: 15px;
+            height: 15px;
+            border-bottom: 2px solid var(--accent);
+            border-left: 2px solid var(--accent);
+            opacity: 0;
+            transition: all 0.4s;
+        }
+
+        .hitech-widget:hover::after,
+        .hitech-widget:hover::before {
+            opacity: 1;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            width: 25px;
+            height: 25px;
+        }
+
+        /* Scanning Line */
+        .scan-line {
+            position: absolute;
+            top: -100%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .hitech-widget:hover .scan-line {
+            animation: scan 1.5s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes scan {
+            0% {
+                top: -10%;
+            }
+
+            100% {
+                top: 110%;
+            }
         }
 
         .tech-pill {
@@ -108,14 +179,36 @@
 
         .experience-card {
             border-left: 2px solid var(--accent);
-            padding-left: 3rem;
-            padding-bottom: 5rem;
+            padding: 4rem;
             position: relative;
         }
 
         .experience-card:hover {
             background: rgba(255, 255, 255, 0.02);
             transform: translateX(10px);
+        }
+
+        .btn-futuristic {
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 1.25rem 3.5rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-radius: 4px;
+            transition: all 0.4s;
+            background: rgba(0, 255, 187, 0.05);
+            cursor: pointer;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-futuristic:hover {
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 0 50px var(--alien-glow);
+            transform: scale(1.05);
         }
 
         .nav-link {
@@ -189,7 +282,8 @@
             <section id="bio" class="bg-white text-black py-40 rounded-[3rem] mx-4 my-20">
                 <div class="section-container">
                     <div class="grid md:grid-cols-2 gap-20">
-                        <div class="space-y-8 reveal hitech-widget">
+                        <div class="space-y-8 reveal hitech-widget p-10">
+                            <div class="scan-line"></div>
                             <h2 class="syne text-5xl font-black uppercase tracking-tighter">Core Intelligence.</h2>
                             <p class="text-xl leading-relaxed text-gray-800">
                                 My journey started with a fascination for automated systems. Today, I build digital
@@ -199,6 +293,7 @@
                         </div>
                         <div class="space-y-12">
                             <div class="reveal hitech-widget p-8 hover:bg-black/5 rounded-2xl transition-all">
+                                <div class="scan-line"></div>
                                 <h3 class="mono text-xs font-bold tracking-[0.4em] mb-8 uppercase text-gray-400">//
                                     Tech_Inventory</h3>
                                 <div class="flex flex-wrap gap-4">
@@ -222,6 +317,7 @@
                     </div>
                     <div class="max-w-4xl mr-auto">
                         <div class="experience-card reveal hitech-widget mb-12 bg-white/5 p-12 rounded-xl">
+                            <div class="scan-line"></div>
                             <h3 class="syne text-3xl font-black uppercase mb-4">Node Operations</h3>
                             <p class="text-gray-500 text-lg" id="display-experience">Deep dive into systems research and
                                 advanced automation.</p>
@@ -232,9 +328,10 @@
 
             <section id="footer-nav" class="py-40">
                 <div class="section-container text-center">
-                    <a href="projects.html"
-                        class="btn-futuristic hitech-widget text-lg border-1 border-emerald-400 p-8 rounded-lg inline-block text-emerald-400">View
-                        Repository</a>
+                    <a href="projects.html" class="btn-futuristic hitech-widget inline-block text-emerald-400">
+                        <div class="scan-line"></div>
+                        View Repository
+                    </a>
                 </div>
             </section>
         </div>
