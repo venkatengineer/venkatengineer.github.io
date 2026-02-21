@@ -144,13 +144,16 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 200vw;
+            width: 100vw;
             height: 400vh;
             background: linear-gradient(180deg, var(--accent) 0%, transparent 100%);
             transform: translateX(-50%);
             opacity: 0;
-            clip-path: polygon(45% 0, 55% 0, 100% 100%, 0 100%);
+            clip-path: polygon(20% 0, 80% 0, 100% 100%, 0 100%);
             z-index: -1;
+            filter: blur(40px);
+            -webkit-mask-image: radial-gradient(ellipse at 50% 0%, black 20%, transparent 70%);
+            mask-image: radial-gradient(ellipse at 50% 0%, black 20%, transparent 70%);
         }
 
         /* --- MAIN CONTENT --- */
@@ -357,9 +360,15 @@
     <div id="spaceship-container">
         <div class="beam" id="revealBeam"></div>
         <svg class="saucer" viewBox="0 0 400 150">
+            <defs>
+                <radialGradient id="engineGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                    <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.8" />
+                    <stop offset="100%" stop-color="var(--accent)" stop-opacity="0" />
+                </radialGradient>
+            </defs>
             <path d="M50 100 Q200 20 350 100 L370 110 Q200 130 30 110 Z" fill="#1a1a1a" />
             <ellipse cx="200" cy="115" rx="175" ry="22" fill="#030303" />
-            <rect x="150" y="112" width="100" height="8" rx="4" class="engine-glow" />
+            <ellipse cx="200" cy="116" rx="80" ry="12" fill="url(#engineGradient)" class="engine-glow" />
             <path d="M140 70 Q200 35 260 70" fill="#222" stroke="var(--accent)" stroke-width="1.5" />
             <circle cx="80" cy="105" r="4" fill="var(--accent)" />
             <circle cx="200" cy="118" r="4" fill="var(--accent)" />
@@ -480,19 +489,23 @@
 
         // --- CLI & REVEAL (WITH SKIP) ---
         let cinematicTimeline = null;
+        let isSkipped = false;
         const cliOverlay = document.getElementById('cli-overlay');
         const spaceship = document.getElementById('spaceship-container');
         const main = document.getElementById('main-content');
         const skipBtn = document.getElementById('skip-splash');
 
         async function skipCinematic() {
+            isSkipped = true;
             if (cinematicTimeline) cinematicTimeline.kill();
             gsap.set(cliOverlay, { display: 'none', opacity: 0 });
             gsap.set(spaceship, { display: 'none' });
             gsap.set(main, { visibility: 'visible', opacity: 1 });
             gsap.set(".reveal-text", { y: 0 });
             gsap.set(".reveal", { opacity: 1, y: 0 });
-            skipBtn.remove();
+            if (skipBtn) skipBtn.remove();
+            if (cliOverlay) cliOverlay.remove();
+            if (spaceship) spaceship.remove();
         }
 
         skipBtn.addEventListener('click', skipCinematic);
@@ -510,6 +523,7 @@
 
             const cliOutput = document.getElementById('cli-output');
             for (let l of lines) {
+                if (isSkipped) return;
                 let div = document.createElement('div');
                 div.className = 'cli-line';
                 div.innerHTML = l.t;
@@ -518,10 +532,13 @@
                 cliOverlay.scrollTop = cliOverlay.scrollHeight;
             }
 
+            if (isSkipped) return;
             spaceship.style.display = 'block';
             cinematicTimeline = gsap.timeline({
                 onComplete: () => {
-                    spaceship.remove(); cliOverlay.remove(); skipBtn.remove();
+                    if (spaceship) spaceship.remove();
+                    if (cliOverlay) cliOverlay.remove();
+                    if (skipBtn) skipBtn.remove();
                 }
             });
 
