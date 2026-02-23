@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -340,15 +340,22 @@
         function loadHackathons() {
             let events = JSON.parse(localStorage.getItem('vb_hackathons') || '[]');
 
-            // Default "Legacy" events if empty
+            grid.innerHTML = '';
+
             if (events.length === 0) {
-                events = [
-                    { title: "Code Crusade", rank: "WINNER // 1st Place", year: "2024", desc: "Advanced algorithmic challenges focusing on data structures and system architecture optimization." },
-                    { title: "Hack-The-Future", rank: "FINALIST // Top 5", year: "2023", desc: "Sustainable tech development marathon aimed at creating circular economy digital blueprints." }
-                ];
+                grid.innerHTML = `
+                    <div class="text-center w-full col-span-full py-20 reveal">
+                        <p class="mono text-xs uppercase tracking-widest text-gray-500 mb-6">// NO_ARENA_EVENTS_DETECTED</p>
+                        <a href="data_node.html" class="btn-futuristic hitech-widget inline-block text-emerald-400">
+                            <div class="scan-line"></div>
+                            Add Events via Command Center
+                        </a>
+                    </div>
+                `;
+                initAnimations();
+                return;
             }
 
-            grid.innerHTML = '';
             events.forEach(event => {
                 const card = document.createElement('div');
                 card.className = 'event-card hitech-widget reveal';
