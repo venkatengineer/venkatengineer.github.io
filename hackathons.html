@@ -14,6 +14,8 @@
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="spaceship-cursor.css" />
+    <link rel="stylesheet" href="interactive-bg.css" />
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
@@ -283,7 +285,6 @@
             <a href="about.html" class="nav-link">/About</a>
             <a href="projects.html" class="nav-link">/Works</a>
             <a href="hackathons.html" class="nav-link text-emerald-400">/Hack</a>
-            <a href="data_node.html" class="nav-link">/Command</a>
             <a href="contact.html" class="nav-link">/Contact</a>
         </div>
     </nav>
@@ -346,10 +347,6 @@
                 grid.innerHTML = `
                     <div class="text-center w-full col-span-full py-20 reveal">
                         <p class="mono text-xs uppercase tracking-widest text-gray-500 mb-6">// NO_ARENA_EVENTS_DETECTED</p>
-                        <a href="data_node.html" class="btn-futuristic hitech-widget inline-block text-emerald-400">
-                            <div class="scan-line"></div>
-                            Add Events via Command Center
-                        </a>
                     </div>
                 `;
                 initAnimations();
@@ -408,6 +405,8 @@
             document.getElementById("progress").style.width = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100 + "%";
         });
     </script>
+    <script src="spaceship-cursor.js"></script>
+    <script src="interactive-bg.js"></script>
 </body>
 
 </html>
