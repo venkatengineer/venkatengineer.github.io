@@ -1,66 +1,59 @@
-// ===== SPACESHIP CURSOR SYSTEM =====
+// ===== IMPROVED SPACESHIP CURSOR SYSTEM =====
 (function () {
     // Don't run on mobile / touch-only devices
     if (window.matchMedia('(max-width: 768px)').matches || 'ontouchstart' in window) return;
 
-    // --- Inject HTML elements ---
-    const shipEl = document.createElement('div');
-    shipEl.id = 'spaceship-cursor';
-    shipEl.innerHTML = `
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <path d="M50 10 L35 55 L40 55 L40 70 L45 75 L50 80 L55 75 L60 70 L60 55 L65 55 Z"
-                  fill="#1a1a2e" stroke="var(--accent, #00ffbb)" stroke-width="1.5"/>
-            <ellipse cx="50" cy="35" rx="6" ry="10" fill="rgba(0,255,187,0.3)" stroke="var(--accent, #00ffbb)" stroke-width="1"/>
-            <path d="M35 55 L15 72 L20 75 L40 62 Z" fill="#0d0d1a" stroke="var(--accent, #00ffbb)" stroke-width="1"/>
-            <path d="M65 55 L85 72 L80 75 L60 62 Z" fill="#0d0d1a" stroke="var(--accent, #00ffbb)" stroke-width="1"/>
-            <ellipse cx="42" cy="78" rx="4" ry="6" fill="var(--accent, #00ffbb)" opacity="0.8">
-                <animate attributeName="opacity" values="0.5;1;0.5" dur="0.15s" repeatCount="indefinite"/>
-                <animate attributeName="ry" values="5;8;5" dur="0.2s" repeatCount="indefinite"/>
-            </ellipse>
-            <ellipse cx="50" cy="82" rx="5" ry="8" fill="var(--accent, #00ffbb)" opacity="0.9">
-                <animate attributeName="opacity" values="0.6;1;0.6" dur="0.12s" repeatCount="indefinite"/>
-                <animate attributeName="ry" values="7;11;7" dur="0.18s" repeatCount="indefinite"/>
-            </ellipse>
-            <ellipse cx="58" cy="78" rx="4" ry="6" fill="var(--accent, #00ffbb)" opacity="0.8">
-                <animate attributeName="opacity" values="0.5;1;0.5" dur="0.15s" repeatCount="indefinite"/>
-                <animate attributeName="ry" values="5;8;5" dur="0.2s" repeatCount="indefinite"/>
-            </ellipse>
-            <circle cx="44" cy="50" r="2" fill="var(--accent, #00ffbb)" opacity="0.6">
-                <animate attributeName="opacity" values="0.3;0.8;0.3" dur="1s" repeatCount="indefinite"/>
-            </circle>
-            <circle cx="56" cy="50" r="2" fill="var(--accent, #00ffbb)" opacity="0.6">
-                <animate attributeName="opacity" values="0.3;0.8;0.3" dur="1s" repeatCount="indefinite" begin="0.5s"/>
-            </circle>
-        </svg>`;
-    document.body.appendChild(shipEl);
+    // --- 1. PINPOINT CURSOR (INSTANT FOLLOW, PRECISE ALIGNMENT) ---
+    const pinpointEl = document.createElement('div');
+    pinpointEl.id = 'cursor-pinpoint';
+    document.body.appendChild(pinpointEl);
 
     const glowEl = document.createElement('div');
     glowEl.id = 'cursor-glow';
     document.body.appendChild(glowEl);
 
-    // --- State ---
+    // --- 2. SPACESHIP FOLLOWER ---
+    const shipEl = document.createElement('div');
+    shipEl.id = 'spaceship-cursor';
+    shipEl.innerHTML = `
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(90deg);">
+            <!-- The spaceship has been rotated 90 degrees in SVG so that 0-deg rotation in CSS points it RIGHT -->
+            <g transform="translate(50, 50) rotate(-90) translate(-50, -50)">
+                <path d="M50 10 L35 55 L40 55 L40 70 L45 75 L50 80 L55 75 L60 70 L60 55 L65 55 Z"
+                      fill="#1a1a2e" stroke="var(--accent, #00ffbb)" stroke-width="1.5"/>
+                <ellipse cx="50" cy="35" rx="6" ry="10" fill="rgba(0,255,187,0.3)" stroke="var(--accent, #00ffbb)" stroke-width="1"/>
+                <path d="M35 55 L15 72 L20 75 L40 62 Z" fill="#0d0d1a" stroke="var(--accent, #00ffbb)" stroke-width="1"/>
+                <path d="M65 55 L85 72 L80 75 L60 62 Z" fill="#0d0d1a" stroke="var(--accent, #00ffbb)" stroke-width="1"/>
+                
+                <!-- Engine Flares -->
+                <ellipse cx="42" cy="78" rx="4" ry="6" fill="var(--accent, #00ffbb)" opacity="0.8" class="engine-flare" />
+                <ellipse cx="50" cy="82" rx="5" ry="8" fill="#fff" opacity="0.9" class="engine-main" />
+                <ellipse cx="58" cy="78" rx="4" ry="6" fill="var(--accent, #00ffbb)" opacity="0.8" class="engine-flare" />
+            </g>
+        </svg>`;
+    document.body.appendChild(shipEl);
+
+    // --- State Variables ---
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
     let shipX = mouseX;
     let shipY = mouseY;
-    let currentAngle = 0;
-    let prevMouseX = mouseX;
-    let prevMouseY = mouseY;
+    let currentAngle = 0; // The angle the ship is facing (0 is right, 90 is down)
+    
     let speed = 0;
     let frameCount = 0;
 
-    // --- Trail particle pool ---
-    const TRAIL_COUNT = 20;
+    // --- Trail & Streak Pools for Performance ---
+    const TRAIL_COUNT = 15;
     const trails = [];
     for (let i = 0; i < TRAIL_COUNT; i++) {
         const t = document.createElement('div');
         t.className = 'cursor-trail';
         document.body.appendChild(t);
-        trails.push({ el: t, x: 0, y: 0, life: 0, active: false, size: Math.random() * 4 + 2, vx: 0, vy: 0 });
+        trails.push({ el: t, x: 0, y: 0, life: 0, active: false, size: 0, vx: 0, vy: 0 });
     }
 
-    // --- Warp streaks pool ---
-    const STREAK_COUNT = 8;
+    const STREAK_COUNT = 10;
     const streaks = [];
     for (let i = 0; i < STREAK_COUNT; i++) {
         const s = document.createElement('div');
@@ -72,176 +65,188 @@
     let trailIndex = 0;
     let streakIndex = 0;
 
-    // --- Mouse tracking ---
+    // --- Event Listeners ---
     document.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
+        
+        // Pinpoint instantly matches mouse for zero-lag precision clicking
+        pinpointEl.style.left = mouseX + 'px';
+        pinpointEl.style.top = mouseY + 'px';
+        
+        // Glow also follows mouse closely
+        glowEl.style.left = mouseX + 'px';
+        glowEl.style.top = mouseY + 'px';
     });
 
-    // --- Hover detection ---
+    const hoverSelectors = 'a, button, input, textarea, select, .btn-futuristic, .cv-btn-ultimate, .hitech-widget, .project-card, .work-card, .event-card, [onclick], [role="button"]';
+    
     document.addEventListener('mouseover', (e) => {
-        const target = e.target.closest('a, button, input, textarea, select, .btn-futuristic, .cv-btn-ultimate, .hitech-widget, .project-card, .work-card, .event-card, [onclick], [role="button"]');
-        if (target) {
+        if (e.target.closest(hoverSelectors)) {
+            pinpointEl.classList.add('hovering');
             glowEl.classList.add('hovering');
-            shipEl.style.filter = 'drop-shadow(0 0 12px var(--accent, #00ffbb)) drop-shadow(0 0 30px rgba(0, 255, 187, 0.5))';
         }
     });
 
     document.addEventListener('mouseout', (e) => {
-        const target = e.target.closest('a, button, input, textarea, select, .btn-futuristic, .cv-btn-ultimate, .hitech-widget, .project-card, .work-card, .event-card, [onclick], [role="button"]');
-        if (target) {
+        if (e.target.closest(hoverSelectors)) {
+            pinpointEl.classList.remove('hovering');
             glowEl.classList.remove('hovering');
-            shipEl.style.filter = 'drop-shadow(0 0 8px var(--accent, #00ffbb)) drop-shadow(0 0 20px rgba(0, 255, 187, 0.3))';
         }
     });
 
-    // --- Click explosion effect ---
+    // --- Click Burst Generator ---
     document.addEventListener('mousedown', (e) => {
-        spawnClickExplosion(e.clientX, e.clientY);
-    });
-
-    function spawnClickExplosion(x, y) {
-        // Expanding ring
-        const ring = document.createElement('div');
-        ring.className = 'click-ring';
-        ring.style.left = x + 'px';
-        ring.style.top = y + 'px';
-        document.body.appendChild(ring);
-
-        // Animate the ring expanding
-        let ringSize = 10;
-        let ringOpacity = 1;
-        function animateRing() {
-            ringSize += 6;
-            ringOpacity -= 0.04;
-            ring.style.width = ringSize + 'px';
-            ring.style.height = ringSize + 'px';
-            ring.style.opacity = Math.max(0, ringOpacity);
-            ring.style.borderWidth = Math.max(0.5, 2 * ringOpacity) + 'px';
-            if (ringOpacity > 0) {
-                requestAnimationFrame(animateRing);
-            } else {
-                ring.remove();
-            }
-        }
-        requestAnimationFrame(animateRing);
-
-        // Burst particles shooting outward
-        const PARTICLE_COUNT = 10;
+        pinpointEl.style.transform = 'translate(-50%, -50%) scale(0.5)';
+        
+        const PARTICLE_COUNT = 8;
         for (let i = 0; i < PARTICLE_COUNT; i++) {
             const p = document.createElement('div');
             p.className = 'click-particle';
-            p.style.left = x + 'px';
-            p.style.top = y + 'px';
+            p.style.left = mouseX + 'px';
+            p.style.top = mouseY + 'px';
             document.body.appendChild(p);
 
-            const angle = (Math.PI * 2 / PARTICLE_COUNT) * i + (Math.random() - 0.5) * 0.5;
-            const velocity = 3 + Math.random() * 5;
-            let px = x;
-            let py = y;
+            const angle = (Math.PI * 2 / PARTICLE_COUNT) * i;
+            const velocity = 2 + Math.random() * 4;
+            let px = mouseX;
+            let py = mouseY;
             let pLife = 1;
-            const pSize = 2 + Math.random() * 3;
 
-            function animateParticle() {
+            function animateBurst() {
                 px += Math.cos(angle) * velocity;
                 py += Math.sin(angle) * velocity;
-                pLife -= 0.04;
+                pLife -= 0.05;
+                
                 if (pLife <= 0) {
                     p.remove();
                     return;
                 }
+                
                 p.style.left = px + 'px';
                 p.style.top = py + 'px';
                 p.style.opacity = pLife;
-                p.style.width = p.style.height = (pSize * pLife) + 'px';
-                requestAnimationFrame(animateParticle);
+                p.style.transform = `translate(-50%, -50%) scale(${pLife})`;
+                requestAnimationFrame(animateBurst);
             }
-            requestAnimationFrame(animateParticle);
+            requestAnimationFrame(animateBurst);
         }
+        
+        // Give the ship a little thrust kick
+        speed += 15;
+    });
 
-        // Brief ship scale pulse
-        shipEl.style.transform = `translate(-50%, -50%) rotate(${currentAngle}deg) scale(1.4)`;
-        setTimeout(() => {
-            shipEl.style.transform = `translate(-50%, -50%) rotate(${currentAngle}deg) scale(1)`;
-        }, 150);
-    }
+    document.addEventListener('mouseup', () => {
+        pinpointEl.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
 
-    // --- Spawn helpers ---
+    // --- Spawner Logic ---
     function spawnTrail(x, y, angle) {
         const t = trails[trailIndex % TRAIL_COUNT];
         trailIndex++;
-        const rad = (angle - 90) * Math.PI / 180;
-        const offsetDist = 18;
-        t.x = x - Math.cos(rad) * offsetDist + (Math.random() - 0.5) * 8;
-        t.y = y - Math.sin(rad) * offsetDist + (Math.random() - 0.5) * 8;
+        
+        // Spawn behind the ship
+        const rad = (angle + 180) * Math.PI / 180;
+        const offsetDist = 12; // Distance from ship center to engine
+        
+        t.x = x + Math.cos(rad) * offsetDist + (Math.random() - 0.5) * 6;
+        t.y = y + Math.sin(rad) * offsetDist + (Math.random() - 0.5) * 6;
         t.life = 1;
         t.active = true;
-        t.size = Math.random() * 4 + 2;
-        t.vx = -Math.cos(rad) * (1 + Math.random() * 2);
-        t.vy = -Math.sin(rad) * (1 + Math.random() * 2);
+        t.size = Math.random() * 3 + 2;
+        
+        // Engine exhaust velocity
+        t.vx = Math.cos(rad) * (1 + Math.random() * 2);
+        t.vy = Math.sin(rad) * (1 + Math.random() * 2);
     }
 
     function spawnStreak(x, y, angle) {
         const s = streaks[streakIndex % STREAK_COUNT];
         streakIndex++;
-        const rad = (angle - 90) * Math.PI / 180;
-        s.x = x - Math.cos(rad) * 25 + (Math.random() - 0.5) * 20;
-        s.y = y - Math.sin(rad) * 25 + (Math.random() - 0.5) * 20;
+        
+        const rad = (angle + 180) * Math.PI / 180;
+        // Spread streaks around the ship wide
+        const perpRad = rad + Math.PI/2;
+        const spread = (Math.random() - 0.5) * 40;
+        
+        s.x = x + Math.cos(rad) * 15 + Math.cos(perpRad) * spread;
+        s.y = y + Math.sin(rad) * 15 + Math.sin(perpRad) * spread;
         s.life = 1;
         s.active = true;
         s.angle = angle;
     }
 
-    // --- Main animation loop ---
+    // --- Main Animation Loop ---
+    let prevShipX = mouseX;
+    let prevShipY = mouseY;
+
     function animate() {
         frameCount++;
 
-        // Smooth follow
-        const ease = 0.15;
-        shipX += (mouseX - shipX) * ease;
-        shipY += (mouseY - shipY) * ease;
+        // Smooth follow logic for the ship
+        // We use a tight ease so it doesn't lag too much, but has weight
+        const distanceX = mouseX - shipX;
+        const distanceY = mouseY - shipY;
+        const dist = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+        
+        // Faster follow when further away
+        const ease = Math.min(0.3, 0.1 + (dist * 0.005)); 
+        
+        shipX += distanceX * ease;
+        shipY += distanceY * ease;
 
-        // Movement delta
-        const dx = mouseX - prevMouseX;
-        const dy = mouseY - prevMouseY;
+        // Calculate speed of the ship itself
+        const dx = shipX - prevShipX;
+        const dy = shipY - prevShipY;
         speed = Math.sqrt(dx * dx + dy * dy);
 
-        // Rotation towards movement direction
-        if (speed > 1.5) {
-            const targetAngle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+        // Rotation logic
+        if (speed > 0.5) {
+            // Target angle based on actual movement direction
+            let targetAngle = Math.atan2(dy, dx) * (180 / Math.PI);
+            
+            // Shortest path rotation
             let diff = targetAngle - currentAngle;
             while (diff > 180) diff -= 360;
             while (diff < -180) diff += 360;
-            currentAngle += diff * 0.12;
+            
+            // We rotate rapidly towards movement
+            currentAngle += diff * 0.25; 
         }
 
-        // Position ship
+        // Apply transformations to ship
         shipEl.style.left = shipX + 'px';
         shipEl.style.top = shipY + 'px';
-        shipEl.style.transform = `translate(-50%, -50%) rotate(${currentAngle}deg) scale(${1 + speed * 0.005})`;
+        
+        // Scale down slightly when stationary to look like idling, and tilt up slightly with speed
+        const scale = Math.min(1.1, 0.8 + (speed * 0.05));
+        shipEl.style.transform = `translate(-50%, -50%) rotate(${currentAngle + 90}deg) scale(${scale})`;
 
-        // Position glow ring
-        glowEl.style.left = shipX + 'px';
-        glowEl.style.top = shipY + 'px';
-
-        // Spawn exhaust trails when moving
-        if (speed > 2 && frameCount % 2 === 0) {
-            spawnTrail(shipX, shipY, currentAngle);
+        // Animate the engine flares based on speed
+        const flares = document.querySelectorAll('.engine-flare, .engine-main');
+        if (speed > 5) {
+            flares.forEach(f => f.style.opacity = Math.random() * 0.5 + 0.5);
+            // Spawn exhaust
+            if (frameCount % 2 === 0) spawnTrail(shipX, shipY, currentAngle);
+        } else {
+            flares.forEach(f => f.style.opacity = Math.random() * 0.2 + 0.2);
         }
 
-        // Spawn warp streaks at high speed
-        if (speed > 15 && frameCount % 4 === 0) {
+        // Warp streaks at high speeds
+        if (speed > 12 && frameCount % 3 === 0) {
             spawnStreak(shipX, shipY, currentAngle);
         }
 
-        // Update trail particles
+        // Process Trails
         for (const t of trails) {
             if (!t.active) continue;
-            t.life -= 0.04;
+            t.life -= 0.05;
             t.x += t.vx;
             t.y += t.vy;
-            t.vx *= 0.96;
-            t.vy *= 0.96;
+            // Drag
+            t.vx *= 0.9;
+            t.vy *= 0.9;
+            
             if (t.life <= 0) {
                 t.active = false;
                 t.el.style.opacity = '0';
@@ -249,17 +254,20 @@
             }
             t.el.style.left = t.x + 'px';
             t.el.style.top = t.y + 'px';
-            t.el.style.opacity = t.life * 0.8;
-            t.el.style.width = t.el.style.height = (t.size * t.life) + 'px';
+            t.el.style.opacity = t.life;
+            t.el.style.transform = `translate(-50%, -50%) scale(${t.size * Math.max(0, t.life)})`;
         }
 
-        // Update warp streaks
+        // Process Streaks
         for (const s of streaks) {
             if (!s.active) continue;
-            s.life -= 0.06;
-            const rad = (s.angle - 90) * Math.PI / 180;
-            s.x -= Math.cos(rad) * 4;
-            s.y -= Math.sin(rad) * 4;
+            s.life -= 0.1;
+            
+            // Move opposite to heading
+            const rad = (s.angle + 180) * Math.PI / 180;
+            s.x += Math.cos(rad) * 15;
+            s.y += Math.sin(rad) * 15;
+            
             if (s.life <= 0) {
                 s.active = false;
                 s.el.style.opacity = '0';
@@ -267,12 +275,13 @@
             }
             s.el.style.left = s.x + 'px';
             s.el.style.top = s.y + 'px';
-            s.el.style.opacity = s.life * 0.6;
-            s.el.style.transform = `translate(-50%, -50%) rotate(${s.angle}deg) scaleY(${1 + speed * 0.1})`;
+            s.el.style.opacity = s.life * 0.8;
+            s.el.style.transform = `translate(-50%, -50%) rotate(${s.angle + 90}deg) scaleY(${1 + speed * 0.2})`;
         }
 
-        prevMouseX = mouseX;
-        prevMouseY = mouseY;
+        prevShipX = shipX;
+        prevShipY = shipY;
+
         requestAnimationFrame(animate);
     }
 

@@ -1,18 +1,43 @@
-/* ===== SPACESHIP CURSOR ===== */
+/* ===== IMPROVED SPACESHIP CURSOR ===== */
 * {
     cursor: none !important;
 }
 
+/* The actual precise click point */
+#cursor-pinpoint {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    background: var(--accent, #00ffbb);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 999999; /* Highest to be on top of everything */
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px var(--accent, #00ffbb), 0 0 20px #fff;
+    transition: width 0.2s, height 0.2s, background 0.2s;
+}
+
+#cursor-pinpoint.hovering {
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    box-shadow: 0 0 15px var(--accent, #00ffbb), 0 0 30px #fff;
+}
+
+/* The trailing spaceship */
 #spaceship-cursor {
     position: fixed;
     top: 0;
     left: 0;
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     pointer-events: none;
-    z-index: 99999;
+    z-index: 999998;
     transform: translate(-50%, -50%) rotate(0deg);
     filter: drop-shadow(0 0 8px var(--accent, #00ffbb)) drop-shadow(0 0 20px rgba(0, 255, 187, 0.3));
+    will-change: transform, left, top;
 }
 
 #spaceship-cursor svg {
@@ -23,87 +48,77 @@
 /* Engine exhaust trail particles */
 .cursor-trail {
     position: fixed;
-    width: 6px;
-    height: 6px;
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
     pointer-events: none;
-    z-index: 99998;
-    background: radial-gradient(circle, var(--accent, #00ffbb), transparent);
-    box-shadow: 0 0 6px var(--accent, #00ffbb), 0 0 12px rgba(0, 255, 187, 0.4);
+    z-index: 999997;
+    background: var(--accent, #00ffbb);
+    box-shadow: 0 0 8px var(--accent, #00ffbb);
     opacity: 0;
     transform: translate(-50%, -50%);
+    will-change: top, left, opacity, transform;
 }
 
-/* Glow ring around cursor */
+/* Hover glow ring */
 #cursor-glow {
     position: fixed;
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     pointer-events: none;
-    z-index: 99997;
-    border: 1px solid rgba(0, 255, 187, 0.15);
-    box-shadow: 0 0 20px rgba(0, 255, 187, 0.08), inset 0 0 20px rgba(0, 255, 187, 0.05);
-    transform: translate(-50%, -50%);
-    transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    z-index: 999997;
+    border: 1px solid rgba(0, 255, 187, 0.2);
+    box-shadow: inset 0 0 15px rgba(0, 255, 187, 0.1);
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s, border-color 0.3s;
 }
 
 #cursor-glow.hovering {
-    width: 80px;
-    height: 80px;
-    border-color: rgba(0, 255, 187, 0.5);
-    box-shadow: 0 0 40px rgba(0, 255, 187, 0.2), inset 0 0 30px rgba(0, 255, 187, 0.1);
+    transform: translate(-50%, -50%) scale(1.6);
+    opacity: 1;
+    border-color: rgba(0, 255, 187, 0.6);
+    box-shadow: inset 0 0 25px rgba(0, 255, 187, 0.3), 0 0 20px rgba(0, 255, 187, 0.2);
 }
 
 /* Warp speed streaks */
 .warp-streak {
     position: fixed;
     width: 2px;
-    height: 15px;
+    height: 25px;
     background: linear-gradient(to bottom, var(--accent, #00ffbb), transparent);
     pointer-events: none;
-    z-index: 99996;
+    z-index: 999996;
     opacity: 0;
     border-radius: 1px;
-}
-
-/* Click explosion ring */
-.click-ring {
-    position: fixed;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: 2px solid var(--accent, #00ffbb);
-    pointer-events: none;
-    z-index: 99999;
-    transform: translate(-50%, -50%);
-    opacity: 1;
-    box-shadow: 0 0 10px var(--accent, #00ffbb), 0 0 20px rgba(0, 255, 187, 0.3);
+    will-change: transform, top, left, opacity;
 }
 
 /* Click burst particles */
 .click-particle {
     position: fixed;
-    width: 4px;
-    height: 4px;
+    width: 3px;
+    height: 3px;
     border-radius: 50%;
     pointer-events: none;
-    z-index: 99999;
-    background: var(--accent, #00ffbb);
-    box-shadow: 0 0 6px var(--accent, #00ffbb);
+    z-index: 999999;
+    background: #fff;
+    box-shadow: 0 0 8px var(--accent, #00ffbb), 0 0 12px #fff;
     transform: translate(-50%, -50%);
+    will-change: top, left, opacity;
 }
 
-/* Hide spaceship cursor on mobile/touch */
+/* Hide custom cursor on mobile/touch */
 @media (max-width: 768px) {
     * {
         cursor: auto !important;
     }
     #spaceship-cursor,
+    #cursor-pinpoint,
     #cursor-glow,
     .cursor-trail,
     .warp-streak,
-    .click-ring,
     .click-particle {
         display: none !important;
     }
